@@ -698,13 +698,13 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                         // See if there is a narration to add from one transaction below
                         if ((i + 1) < intElements) {
                             if (!aryQIF[i][T].equals("T0") && aryQIF[i+1][T].equals("T0")) {
-                                aryQIF[i][M] = aryQIF[i][M] + " \\ " + aryQIF[i+1][M];
+                                aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i+1][M].substring(1);
                                 aryKeep[i+1] = false;
                                 // Sometimes there will be a second additional narration two transactions below
                                 if ((i + 2) < intElements) {
                                     // Only if same date as first extra narration
                                     if (aryQIF[i+2][D].equals(aryQIF[i+1][D]) && aryQIF[i+2][T].equals("T0")) {
-                                        aryQIF[i][M] = aryQIF[i][M] + " \\ " + aryQIF[i+2][M];
+                                        aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i+2][M].substring(1);
                                         aryKeep[i+2] = false;
                                     }
                                 }
