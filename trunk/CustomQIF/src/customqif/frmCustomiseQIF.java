@@ -3,7 +3,6 @@
  *
  * Created on 20 March 2007, 01:09
  */
-
 package customqif;
 
 import java.awt.Component;
@@ -47,17 +46,18 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         // Make the WindowListener our only way out of this app.:
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
-        addWindowListener( new WindowAdapter() {
+        addWindowListener(new WindowAdapter() {
+
             @Override
             public void windowClosing(WindowEvent e) {
                 doTheCloseThing();
-            }            
+            }
         });
 
         loadGrid();
         loadState();
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -339,8 +339,8 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     }//GEN-LAST:event_miQuitActionPerformed
 
     private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveActionPerformed
-        if((stringTable.getRowCount() > 1) &&
-                (stringTable.getSelectedRow() >= 0)) {
+        if ((stringTable.getRowCount() > 1)
+                && (stringTable.getSelectedRow() >= 0)) {
             DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
             tableModel.removeRow(stringTable.getSelectedRow());
             stringTable.setModel(tableModel);
@@ -349,19 +349,36 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
-        tableModel.addRow(new Object[] {"","",""});
+        tableModel.addRow(new Object[]{"", "", ""});
         stringTable.setModel(tableModel);
     }//GEN-LAST:event_btnAddActionPerformed
-    
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
+
             public void run() {
                 new frmCustomiseQIF().setVisible(true);
             }
         });
+    }
+
+    private String nvl(String strString) {
+        if (strString == null) {
+            return "";
+        } else {
+            return strString;
+        }
+    }
+
+    private String nnvl(String strStringToCompare, String strStringToReturnIfNotNull) {
+        if (strStringToCompare == null) {
+            return "";
+        } else {
+            return strStringToReturnIfNotNull;
+        }
     }
 
     public void handleException(Component window, String errorText, String dialogTitle) {
@@ -369,7 +386,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         //    System.err.println("Author email not implemented...");
         //}
         //if (getOption("ErrorsToStdout", false).equalsIgnoreCase("Yes")) {
-            System.out.print(dialogTitle + ": " + errorText);
+        System.out.print(dialogTitle + ": " + errorText);
         //}
         JOptionPane.showMessageDialog(window, errorText, dialogTitle, JOptionPane.ERROR_MESSAGE);
     }
@@ -390,82 +407,114 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         }
 
         int i = 0;
+        int e = 0;
         DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
         int rows = tableModel.getRowCount();
-        
+
         //status1.setText("Processing...");
-        BufferedReader in = null;
         BufferedWriter out = null;
         try {
-            in = new BufferedReader(new FileReader(strInputFile));
+            if (!learn) {
+                // Open output file, write header line
+                out = new BufferedWriter(new FileWriter(ctlOutputFile.getText()));
+                if (strHeader != null) {
+                    out.write(strHeader + "\n");
+                }
+            }
             try {
-                if (!learn) out = new BufferedWriter(new FileWriter(ctlOutputFile.getText()));
-                try {
-                    while (((strLine = in.readLine()) != null) && !blnCancel) {
-                        if (strLine.length() > 0) {
-                            if (strLine.matches("M.*")) {
-                                strDesc = strLine;
-                                for (i=0; (!blnMatch) && (i<rows); i++) {
-                                    strSearchDesc = tableModel.getValueAt(i,0).toString();
-                                    strSearchDesc = strSearchDesc.replaceAll("[(]", "\\[\\(\\]");
-                                    strSearchDesc = strSearchDesc.replaceAll("[)]", "\\[\\)\\]");
-                                    strTypeCode = tableModel.getValueAt(i,1).toString();
-                                    strTypeCode = strTypeCode.replaceAll("[(]", "\\[\\(\\]");
-                                    strTypeCode = strTypeCode.replaceAll("[)]", "\\[\\)\\]");
-                                    strReplaceTypeWith = tableModel.getValueAt(i,2).toString();
-                                    if (strDesc.matches(strSearchDesc)) {
-                                        blnMatch = true;
-                                        //JOptionPane.showMessageDialog(this, "'" + strLine + "' matches '" + strSearchDesc + "'", "Eureka!", JOptionPane.INFORMATION_MESSAGE);
-                                    }
-                                }
-                            } else if (strLine.matches("L.*")) {
-                                if (blnMatch) {
-                                    if (strLine.matches(strTypeCode)) {
-                                        //JOptionPane.showMessageDialog(this, "And also '" + strLine + "' matches '" + strTypeCode + "'", "Eureka again!", JOptionPane.INFORMATION_MESSAGE);
-                                        //JOptionPane.showMessageDialog(this, "So I'll replace it with '" + strReplaceTypeWith + "'", "My response to a match", JOptionPane.INFORMATION_MESSAGE);
-                                        strLine = strReplaceTypeWith;
-                                    }
-                                } else if (learn){
-                                    strSearchDesc = JOptionPane.showInputDialog(this, "Unmatched pair:\n" + strDesc + "\n" + strLine +
-                                                    "\n\nPlease enter a pattern for matching the description:", strDesc);
-                                    blnCancel = strSearchDesc == null;
+                while ((e < intElements) && !blnCancel) {
+                    if (aryQIF[e][M] != null && aryKeep[e]) {
+                        blnMatch = false;
+                        for (i = 0; (!blnMatch) && (i < rows); i++) {
+                            strSearchDesc = tableModel.getValueAt(i, 0).toString();
+                            strSearchDesc = strSearchDesc.replaceAll("[(]", "\\[\\(\\]");
+                            strSearchDesc = strSearchDesc.replaceAll("[)]", "\\[\\)\\]");
+                            strTypeCode = tableModel.getValueAt(i, 1).toString();
+                            strTypeCode = strTypeCode.replaceAll("[(]", "\\[\\(\\]");
+                            strTypeCode = strTypeCode.replaceAll("[)]", "\\[\\)\\]");
+                            strReplaceTypeWith = tableModel.getValueAt(i, 2).toString();
+                            if (aryQIF[e][M].matches(strSearchDesc) && nvl(aryQIF[e][L]).matches(strTypeCode)) {
+                                blnMatch = true;
+                                aryQIF[e][L] = strReplaceTypeWith;
+                                //JOptionPane.showMessageDialog(this, "'" + strLine + "' matches '" + strSearchDesc + "'", "Eureka!", JOptionPane.INFORMATION_MESSAGE);
+                            }
+                        }
+                        if (!blnMatch) {
+                            if (learn) {
+                                strSearchDesc = JOptionPane.showInputDialog(this, "Unmatched record:\n"
+                                        + nvl(aryQIF[e][M]) + nnvl(aryQIF[e][M], "\n")
+                                        + nvl(aryQIF[e][L]) + nnvl(aryQIF[e][L], "\n")
+                                        + nvl(aryQIF[e][D]) + nnvl(aryQIF[e][D], "\n")
+                                        + nvl(aryQIF[e][T]) + nnvl(aryQIF[e][T], "\n")
+                                        + nvl(aryQIF[e][N]) + nnvl(aryQIF[e][N], "\n")
+                                        + "\n\nPlease enter a pattern for matching the description:", aryQIF[e][M]);
+                                blnCancel = strSearchDesc == null;
+                                if (!blnCancel) {
+                                    strTypeCode = JOptionPane.showInputDialog(this, "Unmatched record:\n"
+                                            + nvl(aryQIF[e][M]) + nnvl(aryQIF[e][M], "\n")
+                                            + nvl(aryQIF[e][L]) + nnvl(aryQIF[e][L], "\n")
+                                            + nvl(aryQIF[e][D]) + nnvl(aryQIF[e][D], "\n")
+                                            + nvl(aryQIF[e][T]) + nnvl(aryQIF[e][T], "\n")
+                                            + nvl(aryQIF[e][N]) + nnvl(aryQIF[e][N], "\n")
+                                            + "\n\nNow please enter a pattern for matching the account/category name (you usually accept the default):", aryQIF[e][L]);
+                                    blnCancel = strTypeCode == null;
                                     if (!blnCancel) {
-                                        strTypeCode = JOptionPane.showInputDialog(this, "Unmatched pair:\n" + strDesc + "\n" + strLine +
-                                                        "\n\nNow please enter a pattern for matching the account name:", strLine);
-                                        blnCancel = strTypeCode == null;
+                                        strReplaceTypeWith = JOptionPane.showInputDialog(this, "Unmatched record:\n"
+                                                + nvl(aryQIF[e][M]) + nnvl(aryQIF[e][M], "\n")
+                                                + nvl(aryQIF[e][L]) + nnvl(aryQIF[e][L], "\n")
+                                                + nvl(aryQIF[e][D]) + nnvl(aryQIF[e][D], "\n")
+                                                + nvl(aryQIF[e][T]) + nnvl(aryQIF[e][T], "\n")
+                                                + nvl(aryQIF[e][N]) + nnvl(aryQIF[e][N], "\n")
+                                                + "\n\nFinally, please enter a replacement string for the account name:", aryQIF[e][L]);
+                                        blnCancel = strReplaceTypeWith == null;
                                         if (!blnCancel) {
-                                            strReplaceTypeWith = JOptionPane.showInputDialog(this, "Unmatched pair:\n" + strDesc + "\n" + strLine +
-                                                            "\n\nFinally, please enter a replacement string for the account name:", strLine);
-                                            blnCancel = strReplaceTypeWith == null;
-                                            if (!blnCancel) {
-                                                tableModel.addRow(new Object [] {strSearchDesc, strTypeCode, strReplaceTypeWith});
-                                                rows++;
-                                            }
+                                            tableModel.addRow(new Object[]{strSearchDesc, strTypeCode, strReplaceTypeWith});
+                                            aryQIF[e][L] = strReplaceTypeWith;
+                                            rows++;
                                         }
                                     }
                                 }
-                                blnMatch = false;
                             }
+                            blnMatch = false;
                         }
-                        if (!learn) out.write(strLine + "\n");
                     }
-                    in.close();
-                } catch (IOException exTransRead) {
-                    handleException(this, "Error while reading " + ctlInputFile.getText() + ": " + exTransRead.toString(), "btnExecuteActionPerformed subroutine");
+                    if (!learn && aryKeep[e]) {
+                        if (aryQIF[e][L] != null) {
+                            out.write(aryQIF[e][L] + "\n");
+                        }
+                        if (aryQIF[e][D] != null) {
+                            out.write(aryQIF[e][D] + "\n");
+                        }
+                        if (aryQIF[e][M] != null) {
+                            out.write(aryQIF[e][M] + "\n");
+                        }
+                        if (aryQIF[e][N] != null) {
+                            out.write(aryQIF[e][N] + "\n");
+                        }
+                        if (aryQIF[e][T] != null) {
+                            out.write(aryQIF[e][T] + "\n");
+                        }
+                        out.write("^\n");
+                    }
+                    e++;
                 }
-                if (!learn) out.close();
+                //in.close();
             } catch (IOException exTransWrite) {
+                handleException(this, "Error while writing " + ctlOutputFile.getText() + ": " + exTransWrite.toString(), "btnExecuteActionPerformed subroutine");
             }
-        } catch (FileNotFoundException exFNF) {
-            handleException(this, "Error while opening " + ctlInputFile.getText() + ": " + exFNF.toString(), "btnExecuteActionPerformed subroutine");
+            if (!learn) {
+                out.close();
+            }
+        } catch (IOException exTransWrite2) {
+            handleException(this, "Error while writing " + ctlOutputFile.getText() + ": " + exTransWrite2.toString(), "btnExecuteActionPerformed subroutine part 2");
         }
     }
 
     private void loadGrid() {
         int r, rows;
         String strLine;
-        String [] ary;
-        
+        String[] ary;
+
         // First see if the .CustomQIF directory exists and create it if not
         File myProgramDir = new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
         if (!myProgramDir.mkdirs()) {
@@ -475,16 +524,16 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                 DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
                 // Clear table first
                 rows = tableModel.getRowCount();
-                for (r=(rows - 1); r>=0; r--) {
+                for (r = (rows - 1); r >= 0; r--) {
                     tableModel.removeRow(r);
                     rows--;
                 }
                 try {
                     BufferedReader in = new BufferedReader(new FileReader(myStartupFile));
-                     while ((strLine = in.readLine()) != null) {
+                    while ((strLine = in.readLine()) != null) {
                         ary = strLine.split("\t", 3);
-                        tableModel.addRow(new Object[] {ary[0], ary[1], ary[2]});
-                     }
+                        tableModel.addRow(new Object[]{ary[0], ary[1], ary[2]});
+                    }
                     in.close();
                     stringTable.setModel(tableModel);
                 } catch (IOException ex) {
@@ -498,7 +547,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         int r, c, rows, columns;
         boolean mkdirStatus;
         File myProgramDir = new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
-        if (!myProgramDir.exists()) myProgramDir.mkdirs();
+        if (!myProgramDir.exists()) {
+            myProgramDir.mkdirs();
+        }
         if (myProgramDir.exists()) {
             DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
             rows = tableModel.getRowCount();
@@ -506,7 +557,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             File myStartupFile = new File(myProgramDir, "Patterns");
             try {
                 BufferedWriter out = new BufferedWriter(new FileWriter(myStartupFile));
-                for (r = 0 ; r < rows; r++) {
+                for (r = 0; r < rows; r++) {
                     for (c = 0; c < columns; c++) {
                         out.write(tableModel.getValueAt(r, c).toString());
                         if (c < (columns - 1)) {
@@ -530,7 +581,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                 "Are you sure you want to quit?", "CustomiseQIF",
                 JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.WARNING_MESSAGE);
-        if( selection == JOptionPane.YES_OPTION ) {
+        if (selection == JOptionPane.YES_OPTION) {
             saveGrid();
             saveState();
             dispose();      // Closes the frame
@@ -541,7 +592,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 
     private void saveState() {
         File myProgramDir = new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
-        if (!myProgramDir.exists()) myProgramDir.mkdirs();
+        if (!myProgramDir.exists()) {
+            myProgramDir.mkdirs();
+        }
         if (myProgramDir.exists()) {
             File myStateFile = new File(myProgramDir, "State");
             try {
@@ -561,7 +614,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 
     private void loadState() {
         String strLine;
-        
+
         // First see if the .CustomQIF directory exists and create it if not
         File myProgramDir = new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
         if (!myProgramDir.mkdirs()) {
@@ -569,14 +622,14 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             if (myStateFile.exists()) {
                 try {
                     BufferedReader in = new BufferedReader(new FileReader(myStateFile));
-                     strLine = in.readLine();
-                     if (strLine != null) {
+                    strLine = in.readLine();
+                    if (strLine != null) {
                         ctlInputFile.setText(strLine);
-                     }
-                     strLine = in.readLine();
-                     if (strLine != null) {
+                    }
+                    strLine = in.readLine();
+                    if (strLine != null) {
                         ctlOutputFile.setText(strLine);
-                     }
+                    }
                     in.close();
                 } catch (IOException ex) {
                     handleException(this, "Error while reading '" + myStateFile.getAbsolutePath() + "': " + ex.toString(), "miOpenActionPerformed subroutine");
@@ -588,9 +641,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     private void openFile(String string) {
         FileDialog dlg = new FileDialog(this);
         dlg.setFile(ctlInputFile.getText().substring(
-                ctlInputFile.getText().lastIndexOf(System.getProperty("file.separator"))+1));
+                ctlInputFile.getText().lastIndexOf(System.getProperty("file.separator")) + 1));
         dlg.setDirectory(ctlInputFile.getText().substring(
-                0,ctlInputFile.getText().lastIndexOf(System.getProperty("file.separator"))));
+                0, ctlInputFile.getText().lastIndexOf(System.getProperty("file.separator"))));
         if (string.matches(".*Input.*")) {
             dlg.setMode(FileDialog.LOAD);
         } else {
@@ -648,26 +701,27 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                     if (aryQIF[intElement][L] == null) {
                         if (aryQIF[intElement][N] != null) {
                             aryQIF[intElement][L] = "LCHECK";
-                        } else if (aryQIF[intElement][M].indexOf("DEPOSIT") > 0 &&
-                                   aryQIF[intElement][T].charAt(1) != '-') {
+                        } else if (aryQIF[intElement][M].indexOf("DEPOSIT") > 0
+                                && aryQIF[intElement][T].charAt(1) != '-') {
                             aryQIF[intElement][L] = "LDEP";
-                        } else if (aryQIF[intElement][M].indexOf("PERIODIC PAY") > 0 &&
-                                   aryQIF[intElement][T].charAt(1) == '-') {
-                            aryQIF[intElement][L] = "LREPEATPMT";                   
-                        } else if (aryQIF[intElement][M].indexOf("T'FER") > 0 ||
-                                   aryQIF[intElement][M].indexOf("TFR") > 0) {
+                        } else if (aryQIF[intElement][M].indexOf("PERIODIC PAY") > 0
+                                && aryQIF[intElement][T].charAt(1) == '-') {
+                            aryQIF[intElement][L] = "LREPEATPMT";
+                        } else if (aryQIF[intElement][M].indexOf("T'FER") > 0
+                                || aryQIF[intElement][M].indexOf("TFR") > 0) {
                             aryQIF[intElement][L] = "LXFER";
                         } else if (aryQIF[intElement][M].indexOf("WITHDRAWAL") > 0) {
                             aryQIF[intElement][L] = "LDEBIT";
                         } else if (aryQIF[intElement][T].charAt(1) == '-') {
                             aryQIF[intElement][L] = "LPAYMENT";
-                        } else if (aryQIF[intElement][T].charAt(1) != '0') {
+                        } else if (!aryQIF[intElement][T].equals("T0")) {
                             aryQIF[intElement][L] = "LDEP";
+                        } else if (aryQIF[intElement][T].equals("T0")) {
+                            aryQIF[intElement][L] = "LINFO";
                         }
                     }
                     intElement++;
-                } else
-                if (strLine.length() > 0) {
+                } else if (strLine.length() > 0) {
                     intType = strTypes.indexOf(strLine.charAt(0));
                     if (intType >= 0) {
                         aryQIF[intElement][intType] = strLine;
@@ -684,27 +738,35 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             try {
                 BufferedWriter out = new BufferedWriter(new FileWriter(temp));
                 out.write(strHeader);
-                for (int i = 0 ; i < intElements ; i++) {
+                for (int i = 0; i < intElements; i++) {
                     if (aryKeep[i]) {
                         // See if there is a narration to add from one transaction below
                         if ((i + 1) < intElements) {
-                            if (!aryQIF[i][T].equals("T0") && aryQIF[i+1][T].equals("T0")) {
-                                aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i+1][M].substring(1);
-                                aryKeep[i+1] = false;
-                                // Sometimes there will be a second additional narration two transactions below
+                            if (!aryQIF[i][T].equals("T0") && aryQIF[i + 1][T].equals("T0")) {
+                                aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + 1][M].substring(1);
+                                aryKeep[i + 1] = false;
+                                // Sometimes there will be additional narrations below
                                 if ((i + 2) < intElements) {
                                     // Only if same date as first extra narration
-                                    if (aryQIF[i+2][D].equals(aryQIF[i+1][D]) && aryQIF[i+2][T].equals("T0")) {
-                                        aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i+2][M].substring(1);
-                                        aryKeep[i+2] = false;
+                                    if (aryQIF[i + 2][D].equals(aryQIF[i + 1][D]) && aryQIF[i + 2][T].equals("T0")) {
+                                        aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + 2][M].substring(1);
+                                        aryKeep[i + 2] = false;
+                                        if ((i + 3) < intElements) {
+                                            // Only if same date as first extra narration
+                                            if (aryQIF[i + 3][D].equals(aryQIF[i + 1][D]) && aryQIF[i + 3][T].equals("T0")) {
+                                                aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + 3][M].substring(1);
+                                                aryKeep[i + 3] = false;
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
-                        for (int j = 0 ; j < 5 ; j++)
+                        for (int j = 0; j < 5; j++) {
                             if (aryQIF[i][j] != null) {
                                 out.write(aryQIF[i][j] + "\n");
                             }
+                        }
                         out.write("^\n");
                     }
                 }
@@ -720,7 +782,6 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 
         return temp.getAbsolutePath();
     }
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnDown;
@@ -747,5 +808,4 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     private javax.swing.JMenuItem miSave;
     private javax.swing.JTable stringTable;
     // End of variables declaration//GEN-END:variables
-    
 }
