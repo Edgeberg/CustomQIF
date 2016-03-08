@@ -26,7 +26,20 @@ import javax.swing.table.DefaultTableModel;
  * @author Edgeberg <eldon_r@users.sf.net>
  */
 public class frmCustomiseQIF extends javax.swing.JFrame {
-    
+
+    int intElements = 0;
+    int intElement = 0;
+    int intType = 0;
+    String strHeader = "";
+    String strTypes = "DTMNL";
+    int D = strTypes.indexOf('D');
+    int T = strTypes.indexOf('T');
+    int M = strTypes.indexOf('M');
+    int N = strTypes.indexOf('N');
+    int L = strTypes.indexOf('L');
+    String aryQIF[][] = null;
+    Boolean aryKeep[] = null;
+
     /** Creates new form frmCustomiseQIF */
     public frmCustomiseQIF() {
         initComponents();
@@ -76,15 +89,14 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         miSave = new javax.swing.JMenuItem();
         miQuit = new javax.swing.JMenuItem();
         mOptions = new javax.swing.JMenu();
-        miCombineNarrations = new javax.swing.JCheckBoxMenuItem();
+        miOption1 = new javax.swing.JCheckBoxMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Customise QIF files downloaded from the bank");
 
         stringTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"MINTEREST (INCLUDES BONUS.*", "LINT", "LSavings Interest"},
-                {"MPERIODICAL PAYMENT FROM MR JOE BLOGGS BS DEPOSIT", "LDEP", "LClassic Account"}
+
             },
             new String [] {
                 "Description Pattern", "Transaction Type Pattern", "Transaction Type Replacement"
@@ -167,8 +179,6 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             }
         });
 
-        ctlInputFile.setText("/home/joe_b/InputFile.QIF");
-
         btnOutputFile.setMnemonic('O');
         btnOutputFile.setText("Output File");
         btnOutputFile.addActionListener(new java.awt.event.ActionListener() {
@@ -176,8 +186,6 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                 btnOutputFileActionPerformed(evt);
             }
         });
-
-        ctlOutputFile.setText("/home/joe_b/OutputFile.QIF");
 
         mFile.setMnemonic('F');
         mFile.setText("File");
@@ -217,9 +225,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         mOptions.setMnemonic('O');
         mOptions.setText("Options");
 
-        miCombineNarrations.setSelected(true);
-        miCombineNarrations.setText("Combine Narrations");
-        mOptions.add(miCombineNarrations);
+        miOption1.setSelected(true);
+        miOption1.setText("Reserved for Future Expansion");
+        mOptions.add(miOption1);
 
         mb.add(mOptions);
 
@@ -311,7 +319,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     }//GEN-LAST:event_btnInputFileActionPerformed
 
     private void btnLearnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLearnActionPerformed
-        doTranslation(true, miCombineNarrations.getState());
+        doTranslation(true);
     }//GEN-LAST:event_btnLearnActionPerformed
 
     private void miOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miOpenActionPerformed
@@ -319,7 +327,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     }//GEN-LAST:event_miOpenActionPerformed
 
     private void btnExecuteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExecuteActionPerformed
-        doTranslation(false, miCombineNarrations.getState());
+        doTranslation(false);
     }//GEN-LAST:event_btnExecuteActionPerformed
 
     private void miSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveActionPerformed
@@ -366,7 +374,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(window, errorText, dialogTitle, JOptionPane.ERROR_MESSAGE);
     }
 
-    private void doTranslation(boolean learn, boolean combine) {
+    private void doTranslation(boolean learn) {
         boolean blnCancel = false;
         boolean blnMatch = false;
         String strLine = "";
@@ -376,11 +384,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         String strReplaceTypeWith = "";
         String strInputFile = ctlInputFile.getText();
 
-        if (combine) {
-            strInputFile = combineNarrations();
-            if (strInputFile == null) {
-                return;
-            }
+        strInputFile = combineNarrations();
+        if (strInputFile == null) {
+            return;
         }
 
         int i = 0;
@@ -544,11 +550,6 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                 out.newLine();
                 out.write(ctlOutputFile.getText());
                 out.newLine();
-                if (miCombineNarrations.getState()) {
-                    out.write("CombineNarrations=True");
-                } else {
-                    out.write("CombineNarrations=False");
-                }
                 out.close();
             } catch (IOException ex) {
                 handleException(this, "Error while writing '" + myStateFile.getAbsolutePath() + "': " + ex.toString(), "miSaveActionPerformed subroutine");
@@ -576,10 +577,6 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                      if (strLine != null) {
                         ctlOutputFile.setText(strLine);
                      }
-                     strLine = in.readLine();
-                     if (strLine != null) {
-                         miCombineNarrations.setState(strLine.equals("CombineNarrations=True"));
-                     }
                     in.close();
                 } catch (IOException ex) {
                     handleException(this, "Error while reading '" + myStateFile.getAbsolutePath() + "': " + ex.toString(), "miOpenActionPerformed subroutine");
@@ -606,18 +603,12 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     }
 
     private String combineNarrations() {
-        int intElements = 0;
-        int intElement = 0;
-        int intType = 0;
-        String strHeader = "";
         String strLine = "";
         File temp = null;
-        String strTypes = "DTMNL";
-        int D = strTypes.indexOf('D');
-        int T = strTypes.indexOf('T');
-        int M = strTypes.indexOf('M');
-        int N = strTypes.indexOf('N');
-        int L = strTypes.indexOf('L');
+        intElements = 0;
+        intElement = 0;
+        intType = 0;
+        strHeader = "";
 
         try {
             temp = File.createTempFile("CustomQIF", ".tmp");
@@ -643,8 +634,8 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             return null;
         }
 
-        String aryQIF[][] = new String[intElements][5];
-        Boolean aryKeep[] = new Boolean[intElements];
+        aryQIF = new String[intElements][5];
+        aryKeep = new Boolean[intElements];
 
         try {
             BufferedReader in2 = new BufferedReader(new FileReader(ctlInputFile.getText()));
@@ -662,7 +653,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                             aryQIF[intElement][L] = "LDEP";
                         } else if (aryQIF[intElement][M].indexOf("PERIODIC PAY") > 0 &&
                                    aryQIF[intElement][T].charAt(1) == '-') {
-                            aryQIF[intElement][L] = "LREPEATPMT";
+                            aryQIF[intElement][L] = "LREPEATPMT";                   
                         } else if (aryQIF[intElement][M].indexOf("T'FER") > 0 ||
                                    aryQIF[intElement][M].indexOf("TFR") > 0) {
                             aryQIF[intElement][L] = "LXFER";
@@ -750,8 +741,8 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     private javax.swing.JMenu mFile;
     private javax.swing.JMenu mOptions;
     private javax.swing.JMenuBar mb;
-    private javax.swing.JCheckBoxMenuItem miCombineNarrations;
     private javax.swing.JMenuItem miOpen;
+    private javax.swing.JCheckBoxMenuItem miOption1;
     private javax.swing.JMenuItem miQuit;
     private javax.swing.JMenuItem miSave;
     private javax.swing.JTable stringTable;
