@@ -188,7 +188,7 @@
               <Table columnCount="3" rowCount="2">
                 <Column editable="true" title="Description Pattern" type="java.lang.String">
                   <Data value="MINTEREST (INCLUDES BONUS.*"/>
-                  <Data value="MPERIODICAL PAYMENT FROM MR ELDON ROSENBE BS DEPOSIT"/>
+                  <Data value="MPERIODICAL PAYMENT FROM MR JOE BLOGGS BS DEPOSIT"/>
                 </Column>
                 <Column editable="true" title="Transaction Type Pattern" type="java.lang.String">
                   <Data value="LINT"/>
@@ -293,7 +293,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="ctlInputFile">
       <Properties>
-        <Property name="text" type="java.lang.String" value="/home/eldon_r/InputFile.QIF"/>
+        <Property name="text" type="java.lang.String" value="/home/joe_b/InputFile.QIF"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="btnOutputFile">
@@ -307,7 +307,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="ctlOutputFile">
       <Properties>
-        <Property name="text" type="java.lang.String" value="/home/eldon_r/OutputFile.QIF"/>
+        <Property name="text" type="java.lang.String" value="/home/joe_b/OutputFile.QIF"/>
       </Properties>
     </Component>
   </SubComponents>

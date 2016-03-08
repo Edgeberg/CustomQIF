@@ -11,7 +11,7 @@ package customqif;
 
 /**
  *
- * @author eldon_r
+ * @author Edgeberg <eldon_r@users.sf.net>
  */
 public class Main {
     

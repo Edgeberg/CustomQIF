@@ -19,11 +19,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
+// import javax.swing.table.TableModel;
 
 /**
  *
- * @author  eldon_r
+ * @author Edgeberg <eldon_r@users.sf.net>
  */
 public class frmCustomiseQIF extends javax.swing.JFrame {
     
@@ -35,6 +35,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
         addWindowListener( new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 doTheCloseThing();
             }            
@@ -83,7 +84,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         stringTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {"MINTEREST (INCLUDES BONUS.*", "LINT", "LSavings Interest"},
-                {"MPERIODICAL PAYMENT FROM MR ELDON ROSENBE BS DEPOSIT", "LDEP", "LClassic Account"}
+                {"MPERIODICAL PAYMENT FROM MR JOE BLOGGS BS DEPOSIT", "LDEP", "LClassic Account"}
             },
             new String [] {
                 "Description Pattern", "Transaction Type Pattern", "Transaction Type Replacement"
@@ -166,7 +167,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             }
         });
 
-        ctlInputFile.setText("/home/eldon_r/InputFile.QIF");
+        ctlInputFile.setText("/home/joe_b/InputFile.QIF");
 
         btnOutputFile.setMnemonic('O');
         btnOutputFile.setText("Output File");
@@ -176,7 +177,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             }
         });
 
-        ctlOutputFile.setText("/home/eldon_r/OutputFile.QIF");
+        ctlOutputFile.setText("/home/joe_b/OutputFile.QIF");
 
         mFile.setMnemonic('F');
         mFile.setText("File");
@@ -310,7 +311,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     }//GEN-LAST:event_btnInputFileActionPerformed
 
     private void btnLearnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLearnActionPerformed
-        doTranslation(true);
+        doTranslation(true, miCombineNarrations.getState());
     }//GEN-LAST:event_btnLearnActionPerformed
 
     private void miOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miOpenActionPerformed
@@ -318,7 +319,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     }//GEN-LAST:event_miOpenActionPerformed
 
     private void btnExecuteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExecuteActionPerformed
-        doTranslation(false);
+        doTranslation(false, miCombineNarrations.getState());
     }//GEN-LAST:event_btnExecuteActionPerformed
 
     private void miSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveActionPerformed
@@ -365,7 +366,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(window, errorText, dialogTitle, JOptionPane.ERROR_MESSAGE);
     }
 
-    private void doTranslation(boolean learn) {
+    private void doTranslation(boolean learn, boolean combine) {
         boolean blnCancel = false;
         boolean blnMatch = false;
         String strLine = "";
@@ -373,6 +374,15 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         String strSearchDesc = "";
         String strTypeCode = "";
         String strReplaceTypeWith = "";
+        String strInputFile = ctlInputFile.getText();
+
+        if (combine) {
+            strInputFile = combineNarrations();
+            if (strInputFile == null) {
+                return;
+            }
+        }
+
         int i = 0;
         DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
         int rows = tableModel.getRowCount();
@@ -381,7 +391,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         BufferedReader in = null;
         BufferedWriter out = null;
         try {
-            in = new BufferedReader(new FileReader(ctlInputFile.getText()));
+            in = new BufferedReader(new FileReader(strInputFile));
             try {
                 if (!learn) out = new BufferedWriter(new FileWriter(ctlOutputFile.getText()));
                 try {
@@ -524,7 +534,6 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     }
 
     private void saveState() {
-        boolean mkdirStatus;
         File myProgramDir = new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
         if (!myProgramDir.exists()) myProgramDir.mkdirs();
         if (myProgramDir.exists()) {
@@ -594,6 +603,102 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         if (dlg.getFile() != null) {
             ctlInputFile.setText(dlg.getDirectory() + dlg.getFile());
         }
+    }
+
+    private String combineNarrations() {
+        int intElements = 0;
+        int intElement = 0;
+        int intType = 0;
+        String strHeader = "";
+        String strLine = "";
+        File temp = null;
+        String strTypes = "DTMNL";
+        // int D = strTypes.indexOf('D');
+        int T = strTypes.indexOf('T');
+        int M = strTypes.indexOf('M');
+        // int N = strTypes.indexOf('N');
+        // int L = strTypes.indexOf('L');
+
+        try {
+            temp = File.createTempFile("CustomQIF", ".tmp");
+        } catch (IOException e) {
+            handleException(this, "Unable to create intermediate file.", "combineNarrations Function");
+            return null;
+        }
+        temp.deleteOnExit();
+
+        try {
+            BufferedReader in1 = new BufferedReader(new FileReader(ctlInputFile.getText()));
+            strLine = in1.readLine();
+            while ((strLine = in1.readLine()) != null) {
+                if (strLine.length() == 1) {
+                    if (strLine.equalsIgnoreCase("^")) {
+                        intElements++;
+                    }
+                }
+            }
+            in1.close();
+        } catch (IOException f) {
+            handleException(this, "Unable to read input file \"" + ctlInputFile.getText() + "\" to count the elements.", "combineNarrations Function");
+            return null;
+        }
+
+        String aryQIF[][] = new String[intElements][5];
+        Boolean aryKeep[] = new Boolean[intElements];
+
+        try {
+            BufferedReader in2 = new BufferedReader(new FileReader(ctlInputFile.getText()));
+            strLine = in2.readLine();
+            strHeader = strLine;
+            while ((strLine = in2.readLine()) != null) {
+                if (strLine.equals("^")) {
+                    aryKeep[intElement] = true;
+                    intElement++;
+                } else
+                if (strLine.length() > 0) {
+                    intType = strTypes.indexOf(strLine.charAt(0));
+                    if (intType >= 0) {
+                        aryQIF[intElement][intType] = strLine;
+                    }
+                }
+            }
+            in2.close();
+        } catch (IOException g) {
+            handleException(this, "Unable to read input file \"" + ctlInputFile.getText() + "\".", "combineNarrations Function");
+            return null;
+        }
+
+        if (intElement > 0) {
+            try {
+                BufferedWriter out = new BufferedWriter(new FileWriter(temp));
+                out.write(strHeader);
+                for (int i = 0 ; i < intElements ; i++) {
+                    if (aryKeep[i]) {
+                        // See if there is a narration to add from one transaction below
+                        if ((i + 1) < intElements) {
+                            if (!aryQIF[i][T].equals("T0") && aryQIF[i+1][T].equals("T0")) {
+                                aryQIF[i][M] = aryQIF[i][M] + " \\ " + aryQIF[i+1][M];
+                                aryKeep[i+1] = false;
+                            }
+                        }
+                        for (int j = 0 ; j < 5 ; j++)
+                            if (aryQIF[i][j] != null) {
+                                out.write(aryQIF[i][j] + "\n");
+                            }
+                        out.write("^\n");
+                    }
+                }
+                out.close();
+            } catch (IOException ex) {
+                handleException(this, "Error while writing intermediate file '" + temp.getAbsolutePath() + "': " + ex.toString(), "combineNarrations function");
+            }
+
+        } else {
+            handleException(this, "Input file \"" + ctlInputFile.getText() + "\" is either not a .QIF file or is empty..", "combineNarrations Function");
+            return null;
+        }
+
+        return temp.getAbsolutePath();
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
