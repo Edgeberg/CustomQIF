@@ -742,18 +742,28 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                     if (aryKeep[i]) {
                         // See if there is a narration to add from one transaction below
                         if ((i + 1) < intElements) {
-                            if (!aryQIF[i][T].equals("T0") && aryQIF[i + 1][T].equals("T0")) {
+                            if (aryQIF[i][M].equals("MLOAN INTEREST")) {
+                                // These ones (almost?) always have a 2nd narration of a known pattern after them, either immediately or a bit later:
+                                boolean blnLIdone = false;
+                                for (int li = 1 ; (i + li < intElements) && (li < 16) && !blnLIdone ; li++) {
+                                    if (aryKeep[i + li] && aryQIF[i + li][M].matches("MPAYMENT ALTERED .*")) {
+                                        aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + li][M].substring(1);
+                                        aryKeep[i + li] = false;
+                                        blnLIdone = true;
+                                    }
+                                }
+                            } else if (!aryQIF[i][T].equals("T0") && aryQIF[i + 1][T].equals("T0") && !aryQIF[i + 1][M].matches("MRATE ALTERED .*")) {
                                 aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + 1][M].substring(1);
                                 aryKeep[i + 1] = false;
                                 // Sometimes there will be additional narrations below
                                 if ((i + 2) < intElements) {
                                     // Only if same date as first extra narration
-                                    if (aryQIF[i + 2][D].equals(aryQIF[i + 1][D]) && aryQIF[i + 2][T].equals("T0")) {
+                                    if (aryQIF[i + 2][D].equals(aryQIF[i + 1][D]) && aryQIF[i + 2][T].equals("T0") && !aryQIF[i + 2][M].matches("MRATE ALTERED .*")) {
                                         aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + 2][M].substring(1);
                                         aryKeep[i + 2] = false;
                                         if ((i + 3) < intElements) {
                                             // Only if same date as first extra narration
-                                            if (aryQIF[i + 3][D].equals(aryQIF[i + 1][D]) && aryQIF[i + 3][T].equals("T0")) {
+                                            if (aryQIF[i + 3][D].equals(aryQIF[i + 1][D]) && aryQIF[i + 3][T].equals("T0") && !aryQIF[i + 3][M].matches("MRATE ALTERED .*")) {
                                                 aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + 3][M].substring(1);
                                                 aryKeep[i + 3] = false;
                                             }
