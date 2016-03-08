@@ -613,11 +613,11 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         String strLine = "";
         File temp = null;
         String strTypes = "DTMNL";
-        // int D = strTypes.indexOf('D');
+        int D = strTypes.indexOf('D');
         int T = strTypes.indexOf('T');
         int M = strTypes.indexOf('M');
-        // int N = strTypes.indexOf('N');
-        // int L = strTypes.indexOf('L');
+        int N = strTypes.indexOf('N');
+        int L = strTypes.indexOf('L');
 
         try {
             temp = File.createTempFile("CustomQIF", ".tmp");
@@ -653,6 +653,27 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             while ((strLine = in2.readLine()) != null) {
                 if (strLine.equals("^")) {
                     aryKeep[intElement] = true;
+                    // Fix missing L tags
+                    if (aryQIF[intElement][L] == null) {
+                        if (aryQIF[intElement][N] != null) {
+                            aryQIF[intElement][L] = "LCHECK";
+                        } else if (aryQIF[intElement][M].indexOf("DEPOSIT") > 0 &&
+                                   aryQIF[intElement][T].charAt(1) != '-') {
+                            aryQIF[intElement][L] = "LDEP";
+                        } else if (aryQIF[intElement][M].indexOf("PERIODIC PAY") > 0 &&
+                                   aryQIF[intElement][T].charAt(1) == '-') {
+                            aryQIF[intElement][L] = "LREPEATPMT";
+                        } else if (aryQIF[intElement][M].indexOf("T'FER") > 0 ||
+                                   aryQIF[intElement][M].indexOf("TFR") > 0) {
+                            aryQIF[intElement][L] = "LXFER";
+                        } else if (aryQIF[intElement][M].indexOf("WITHDRAWAL") > 0) {
+                            aryQIF[intElement][L] = "LDEBIT";
+                        } else if (aryQIF[intElement][T].charAt(1) == '-') {
+                            aryQIF[intElement][L] = "LPAYMENT";
+                        } else if (aryQIF[intElement][T].charAt(1) != '0') {
+                            aryQIF[intElement][L] = "LDEP";
+                        }
+                    }
                     intElement++;
                 } else
                 if (strLine.length() > 0) {
@@ -679,6 +700,14 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                             if (!aryQIF[i][T].equals("T0") && aryQIF[i+1][T].equals("T0")) {
                                 aryQIF[i][M] = aryQIF[i][M] + " \\ " + aryQIF[i+1][M];
                                 aryKeep[i+1] = false;
+                                // Sometimes there will be a second additional narration two transactions below
+                                if ((i + 2) < intElements) {
+                                    // Only if same date as first extra narration
+                                    if (aryQIF[i+2][D].equals(aryQIF[i+1][D]) && aryQIF[i+2][T].equals("T0")) {
+                                        aryQIF[i][M] = aryQIF[i][M] + " \\ " + aryQIF[i+2][M];
+                                        aryKeep[i+2] = false;
+                                    }
+                                }
                             }
                         }
                         for (int j = 0 ; j < 5 ; j++)
