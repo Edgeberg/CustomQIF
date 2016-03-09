@@ -1,6 +1,6 @@
 /*
- * Main.java
- *
+ * $Id: Main.java 17 2010-03-24 14:06:24Z eldon_r $
+ * 
  * Created on 19 March 2007, 23:10
  *
  * This program was created to store and use regular expression strings for
@@ -31,7 +31,7 @@ package customqif;
 
 /**
  *
- * @author Edgeberg <eldon_r@users.sf.net>
+ * @author Eldon Rosenberg <Eldon.Rosenberg@ozemail.com.au>
  */
 public class Main {
     
