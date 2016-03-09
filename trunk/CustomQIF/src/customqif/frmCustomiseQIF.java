@@ -1,5 +1,5 @@
 /*
- * $Id: frmCustomiseQIF.java 33 2014-09-07 16:03:36Z eldon_r $
+ * $Id: frmCustomiseQIF.java 35 2014-09-28 15:12:55Z eldon_r $
  *
  * Created on 20 March 2007, 01:09
  *
@@ -955,6 +955,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         strHeader = "";
         boolean blnDateChecked = false;
         boolean blnDelimiterFound = false;
+        String StrMElement;
 
         try {
             temp = File.createTempFile("CustomQIF", ".tmp");
@@ -1023,25 +1024,31 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                     aryKeep[intElement] = true;
                     // Fix missing L tags
                     if (aryQIF[intElement][L] == null) {
-                        if (aryQIF[intElement][N] != null) {
+                        StrMElement = aryQIF[intElement][M].toUpperCase();
+                        if (aryQIF[intElement][N] != null
+                                || StrMElement.indexOf("PERSONAL CHEQUE") >= 0) {
                             aryQIF[intElement][L] = "CHECK";
-                        } else if ((aryQIF[intElement][M].indexOf("CREDIT ") == 0 &&
-                                   !aryQIF[intElement][M].startsWith("JOURNAL")) ||
-                                (  aryQIF[intElement][M].indexOf("DEPOSIT") >= 0
+                        } else if ((StrMElement.indexOf("CREDIT ") == 0 &&
+                                   !StrMElement.startsWith("JOURNAL")) ||
+                                (  StrMElement.indexOf("DEPOSIT") >= 0
                                 && aryQIF[intElement][T].charAt(0) != '-')) {
                             aryQIF[intElement][L] = "DEP";
-                        } else if (aryQIF[intElement][M].indexOf("PERIODIC PAY") >= 0
+                        } else if (StrMElement.indexOf("PERIODIC PAY") >= 0
                                 && aryQIF[intElement][T].charAt(0) == '-') {
                             aryQIF[intElement][L] = "REPEATPMT";
-                        } else if (aryQIF[intElement][M].indexOf("T'FER") >= 0
-                                || aryQIF[intElement][M].indexOf("TFR") >= 0) {
+                        } else if (StrMElement.indexOf("T'FER") >= 0
+                                || StrMElement.indexOf("TFR") >= 0
+                                || StrMElement.indexOf("DEBIT TRANSFER") >= 0) {
                             aryQIF[intElement][L] = "XFER";
-                        } else if (aryQIF[intElement][M].indexOf("WITHDRAWAL") >= 0) {
+                        } else if (StrMElement.indexOf("WITHDRAWAL") >= 0) {
                             aryQIF[intElement][L] = "DEBIT";
                         } else if (aryQIF[intElement][T].charAt(0) == '-'
-                                || aryQIF[intElement][M].indexOf("RETAIL PURCHASE") >= 0
-                                || aryQIF[intElement][M].indexOf("BPAY") >= 0
-                                || aryQIF[intElement][M].indexOf("BILL PAYMENT") >= 0) {
+                                || StrMElement.indexOf("RETAIL PURCHASE") >= 0
+                                || StrMElement.indexOf("BPAY") >= 0
+                                || StrMElement.indexOf("DIRECT DEBIT") >= 0
+                                || StrMElement.indexOf("TRANSACTION FEE") >= 0
+                                || StrMElement.indexOf("LOAN INTEREST") >= 0
+                                || StrMElement.indexOf("BILL PAYMENT") >= 0) {
                             aryQIF[intElement][L] = "PAYMENT";
                         } else if (!aryQIF[intElement][T].equals("0")) {
                             aryQIF[intElement][L] = "DEP";
