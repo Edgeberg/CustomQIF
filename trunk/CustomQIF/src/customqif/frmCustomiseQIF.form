@@ -132,7 +132,7 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
@@ -141,24 +141,24 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="ctlOutputFile" pref="557" max="32767" attributes="0"/>
-                          <Component id="ctlInputFile" alignment="0" pref="557" max="32767" attributes="0"/>
+                          <Component id="ctlInputFile" max="32767" attributes="0"/>
+                          <Component id="ctlOutputFile" max="32767" attributes="0"/>
                       </Group>
                   </Group>
-                  <Component id="jScrollPane1" alignment="1" pref="674" max="32767" attributes="2"/>
+                  <Component id="jScrollPane1" pref="716" max="32767" attributes="2"/>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="btnExecute" pref="110" max="32767" attributes="3"/>
-                  <Component id="btnLoad" alignment="1" max="32767" attributes="1"/>
-                  <Component id="btnSave" alignment="1" max="32767" attributes="1"/>
-                  <Component id="btnDown" alignment="1" max="32767" attributes="1"/>
-                  <Component id="btnUp" alignment="1" max="32767" attributes="1"/>
-                  <Component id="btnFind" alignment="1" max="32767" attributes="0"/>
-                  <Component id="btnRemove" alignment="1" max="32767" attributes="1"/>
-                  <Component id="btnEdit" alignment="1" max="32767" attributes="1"/>
+                  <Component id="btnLearn" alignment="1" max="32767" attributes="1"/>
                   <Component id="btnAdd" alignment="1" max="32767" attributes="1"/>
-                  <Component id="btnLearn" max="32767" attributes="1"/>
+                  <Component id="btnEdit" alignment="1" max="32767" attributes="1"/>
+                  <Component id="btnRemove" alignment="1" max="32767" attributes="1"/>
+                  <Component id="btnFind" alignment="1" max="32767" attributes="0"/>
+                  <Component id="btnUp" alignment="1" max="32767" attributes="1"/>
+                  <Component id="btnDown" alignment="1" max="32767" attributes="1"/>
+                  <Component id="btnSave" alignment="1" max="32767" attributes="1"/>
+                  <Component id="btnLoad" alignment="1" max="32767" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -169,8 +169,8 @@
           <Group type="102" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="1" attributes="0">
-                      <Component id="jScrollPane1" pref="434" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="jScrollPane1" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="btnInputFile" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -182,7 +182,7 @@
                           <Component id="ctlOutputFile" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <Group type="102" alignment="1" attributes="0">
+                  <Group type="102" attributes="0">
                       <Component id="btnAdd" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnEdit" min="-2" max="-2" attributes="0"/>
@@ -198,7 +198,7 @@
                       <Component id="btnSave" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnLoad" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="126" max="32767" attributes="0"/>
+                      <EmptySpace pref="175" max="32767" attributes="0"/>
                       <Component id="btnExecute" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnLearn" min="-2" max="-2" attributes="0"/>
@@ -224,8 +224,10 @@
       <SubComponents>
         <Component class="javax.swing.JTable" name="stringTable">
           <Properties>
+            <Property name="autoCreateRowSorter" type="boolean" value="true"/>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="4" rowCount="0">
+              <Table columnCount="5" rowCount="0">
+                <Column editable="false" title="#" type="java.lang.Integer"/>
                 <Column editable="true" title="Description Pattern" type="java.lang.String"/>
                 <Column editable="true" title="Transaction Type Pattern" type="java.lang.String"/>
                 <Column editable="true" title="Transaction Type Replacement" type="java.lang.String"/>
@@ -234,7 +236,12 @@
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
               <TableColumnModel selectionModel="0">
-                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                <Column maxWidth="40" minWidth="20" prefWidth="30" resizable="true">
+                  <Title/>
+                  <Editor/>
+                  <Renderer/>
+                </Column>
+                <Column maxWidth="-1" minWidth="-1" prefWidth="300" resizable="true">
                   <Title/>
                   <Editor/>
                   <Renderer/>
@@ -245,6 +252,11 @@
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                  <Title/>
+                  <Editor/>
+                  <Renderer/>
+                </Column>
+                <Column maxWidth="-1" minWidth="-1" prefWidth="200" resizable="true">
                   <Title/>
                   <Editor/>
                   <Renderer/>
