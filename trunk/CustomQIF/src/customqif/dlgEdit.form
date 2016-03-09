@@ -155,7 +155,11 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jtfNarration" pref="634" max="32767" attributes="0"/>
-                          <Component id="lblPattern" max="32767" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Component id="lblPattern" min="-2" pref="360" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="cbMatchOther" max="32767" attributes="0"/>
+                          </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -164,7 +168,10 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="lblPattern" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="lblPattern" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="cbMatchOther" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jtfNarration" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -178,13 +185,22 @@
                   <ComponentRef name="jtfNarration"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Pattern for matching the description / narration*"/>
-                <Property name="toolTipText" type="java.lang.String" value="Optionally, to also match on transaction date and/or amount, add these at the end of the narration pattern separated by a vertical bar (|) (i.e., in that order)"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Optionally, to also match on transaction date and/or amount and/or cheque number, add your&lt;br /&gt;&#xa;match text at the end of the narration pattern separated by vertical bar (|) (i.e., in that order).&lt;br /&gt;&#xa;Leave any of these optional text fields empty if you don&apos;t want to match on them; they will be ignored."/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="jtfNarration">
               <Events>
                 <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jtfNarrationFocusLost"/>
                 <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="jtfNarrationPropertyChange"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="cbMatchOther">
+              <Properties>
+                <Property name="mnemonic" type="int" value="109"/>
+                <Property name="text" type="java.lang.String" value="Also match other fields"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbMatchOtherActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

@@ -1,5 +1,5 @@
 /*
- * $Id: frmCustomiseQIF.java 36 2014-09-30 14:55:08Z eldon_r $
+ * $Id: frmCustomiseQIF.java 38 2014-10-26 12:18:57Z eldon_r $
  *
  * Created on 20 March 2007, 01:09
  *
@@ -45,7 +45,8 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     boolean blnCancelModalDialog = false;
     Boolean blnReversedTransactions = false;
     Boolean blnReformatDate = false;    // If we have sensed that we've got MM/DD/YYYY dates; we want YYYYMMDD.
-                                        // FIXME: This is a limited, inflexible check, and we currently only handle these 2 options.
+    Boolean blnDDMM = false;            // If the above is true AND we've found an obvious DD/MM/YYYY formatted date in the file.
+                                        // FIXME: This is a limited, inflexible check, and we currently only handle these 3 options.
     String strMatchError = "";
 
     /** Creates new form frmCustomiseQIF */
@@ -585,29 +586,36 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     }
 
     public boolean matchTransaction(String strSearchDesc, String strTypeCode,
-            String strNarration, String strType, String strDate, String strAmount,
+            String strNarration, String strType, String strDate, String strAmount, String strCheque,
             boolean blnCanErrorDlg) {
         String strMatchDate;
         String strMatchAmount;
-        boolean blnMatchesDate = true;    // These two refer to optional patterns, so start with
+        String strMatchCheque;
+        boolean blnMatchesDate = true;    // These 3 refer to optional patterns, so start with
         boolean blnMatchesAmount = true;  // the assumption that this part matches
+        boolean blnMatchesCheque = true;
         boolean blnMatch = false;
         strMatchError = "";
         if (strSearchDesc.contains("|")) {
-            strMatchDate = strSearchDesc.split("\\|", 3)[1];
-            strMatchAmount = strSearchDesc.concat("|").split("\\|",3)[2];
+            strMatchDate = strSearchDesc.split("\\|", 8)[1];
+            strMatchAmount = strSearchDesc.concat("|").split("\\|",8)[2];
+            strMatchCheque = strSearchDesc.concat("||").split("\\|",8)[3];
             if (!strMatchDate.equals("")) {
                 blnMatchesDate = strDate.matches(strMatchDate);
             }
             if (!strMatchAmount.equals("")) {
                 blnMatchesAmount = strAmount.matches(strMatchAmount);
             }
+            if (!strMatchCheque.equals("")) {
+                blnMatchesCheque = strCheque.matches(strMatchCheque);
+            }
         }
         try {
             if (strNarration.matches(strSearchDesc)
                 && nvl(strType).matches(strTypeCode)
                 && blnMatchesDate
-                && blnMatchesAmount) {
+                && blnMatchesAmount
+                && blnMatchesCheque) {
                 blnMatch = true;
                 //JOptionPane.showMessageDialog(this, "'" + strLine + "' matches '" + strSearchDesc + "'", "Eureka!", JOptionPane.INFORMATION_MESSAGE);
             }
@@ -668,7 +676,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                             strTypeCode = strTypeCode.replaceAll("[(]", "\\[\\(\\]");
                             strTypeCode = strTypeCode.replaceAll("[)]", "\\[\\)\\]");
                             strReplaceTypeWith = tableModelInProgress.getValueAt(i, 2).toString();
-                            if (matchTransaction(strSearchDesc, strTypeCode, aryQIF[e][M], aryQIF[e][L], aryQIF[e][D], aryQIF[e][T], true)) {
+                            if (matchTransaction(strSearchDesc, strTypeCode, aryQIF[e][M], aryQIF[e][L], aryQIF[e][D], aryQIF[e][T], aryQIF[e][N], true)) {
                                 blnMatch = true;
                                 aryQIF[e][L] = strReplaceTypeWith;
                                 if (!tableModelInProgress.getValueAt(i, 3).toString().equals("")) {
@@ -826,9 +834,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             File myStateFile = new File(myProgramDir, "State");
             try {
                 BufferedWriter out = new BufferedWriter(new FileWriter(myStateFile));
-                out.write("InputFile = " + ctlInputFile.getText());
+                out.write("InputFile_" + System.getProperty("os.name").replace(' ', '_') + " = " + ctlInputFile.getText());
                 out.newLine();
-                out.write("OutputFile = " + ctlOutputFile.getText());
+                out.write("OutputFile_" + System.getProperty("os.name").replace(' ', '_') + " = " + ctlOutputFile.getText());
                 out.newLine();
                 out.write("NarrationOnlyPatterns = " + strNarrationPatterns);
                 out.newLine();
@@ -860,7 +868,10 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         String aryGeom[];
 
         blnReversedTransactions = false; // default for when this value not set in State file
-        
+
+        ctlInputFile.setText(System.getProperty("user.home") + System.getProperty("file.separator") + "inputfile.qif");
+        ctlOutputFile.setText(System.getProperty("user.home") + System.getProperty("file.separator") + "outputfile.qif");
+
         // First see if the .CustomQIF directory exists and create it if not
         File myProgramDir = new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
         if (!myProgramDir.mkdirs()) {
@@ -875,9 +886,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                         if (intEqOffset > 0 && intEqOffset < strLine.length()) {
                             strKey = strLine.substring(0,intEqOffset).trim().toLowerCase();
                             strValue = strLine.substring(intEqOffset + 1).trim();
-                            if (strKey.equals("inputfile")) {
+                            if (strKey.equals("inputfile_" + System.getProperty("os.name").toLowerCase().replace(' ', '_'))) {
                                 ctlInputFile.setText(strValue);
-                            } else if (strKey.equals("outputfile")) {
+                            } else if (strKey.equals("outputfile_" + System.getProperty("os.name").toLowerCase().replace(' ', '_'))) {
                                 ctlOutputFile.setText(strValue);
                             } else if (strKey.equals("patternfile")) {
                                 strPatternFile = strValue;
@@ -916,15 +927,20 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                     handleException(this, "Error while reading '" + myStateFile.getAbsolutePath() + "': " + ex.toString(), "miOpenActionPerformed subroutine");
                 }
             }
+        } else {
+            // Set defaults, as there was no private application data folder?
         }
     }
 
     private void openFile(String string) {
         FileDialog dlg = new FileDialog(this);
-        dlg.setFile(ctlInputFile.getText().substring(
-                ctlInputFile.getText().lastIndexOf(System.getProperty("file.separator")) + 1));
-        dlg.setDirectory(ctlInputFile.getText().substring(
-                0, ctlInputFile.getText().lastIndexOf(System.getProperty("file.separator"))));
+        if (ctlInputFile.getText().contains(System.getProperty("file.separator"))) {
+            dlg.setFile(ctlInputFile.getText().substring(ctlInputFile.getText().lastIndexOf(System.getProperty("file.separator")) + 1));
+            dlg.setDirectory(ctlInputFile.getText().substring(0, ctlInputFile.getText().lastIndexOf(System.getProperty("file.separator"))));
+        } else {
+            dlg.setFile(ctlInputFile.getText());
+            dlg.setDirectory("");
+        }
         if (string.matches(".*Input.*")) {
             dlg.setMode(FileDialog.LOAD);
         } else {
@@ -984,6 +1000,10 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                         blnReformatDate = false;
                     } else if (strLine.matches("^D[0-9]{2}/[0-9]{2}/[0-9]{4}$")) {
                         blnReformatDate = true;
+                        if (strLine.substring(1, 3).compareTo("12") > 0) {
+                            // If "month" > december, it must be "day"
+                            blnDDMM = true;
+                        }
                     }
                 }
                 if (strLine.endsWith("^")) {
@@ -1014,8 +1034,13 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                     if (intType >= 0) {
                         try {
                             if (intType == D && blnReformatDate) {
-                                DD = strLine.substring(4,6);
-                                MM = strLine.substring(1,3);
+                                if (blnDDMM) {
+                                    DD = strLine.substring(1,3);
+                                    MM = strLine.substring(4,6);
+                                } else {
+                                    DD = strLine.substring(4,6);
+                                    MM = strLine.substring(1,3);
+                                }
                                 YYYY = strLine.substring(7,11);
                                 strLine = strLine.substring(0,1).concat(YYYY).concat(MM).concat(DD);
                             }
