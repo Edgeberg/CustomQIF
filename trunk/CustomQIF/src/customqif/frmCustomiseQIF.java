@@ -1,5 +1,5 @@
 /*
- * $Id: frmCustomiseQIF.java 43 2014-11-09 09:26:22Z eldon_r $
+ * $Id: frmCustomiseQIF.java 44 2014-11-17 09:47:09Z eldon_r $
  *
  * Created on 20 March 2007, 01:09
  *
@@ -1001,7 +1001,12 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         dlg.setVisible(true);
         if (dlg.getFile() != null) {
             if (string.matches(".*Input.*")) {
-                ctlInputFile.setText(dlg.getDirectory() + dlg.getFile());
+                String infile = dlg.getDirectory() + dlg.getFile();
+                ctlInputFile.setText(infile);
+                String outfile = infile.replaceAll("[.][Qq][Ii][Ff]", "_mod.qif");
+                if (!infile.equalsIgnoreCase(outfile)) {
+                    ctlOutputFile.setText(outfile);
+                }
             } else {
                 ctlOutputFile.setText(dlg.getDirectory() + dlg.getFile());
             }
