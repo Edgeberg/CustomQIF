@@ -1,8 +1,8 @@
 /*
- * frmCustomiseQIF.java
+ * $Id: frmCustomiseQIF.java 22 2010-03-24 14:16:47Z eldon_r $
  *
  * Created on 20 March 2007, 01:09
- * $Id: frmCustomiseQIF.java 15 2009-12-15 09:54:52Z eldon_r $
+ *
  */
 package customqif;
 
@@ -22,7 +22,7 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author Edgeberg <eldon_r@users.sf.net>
+ * @author  Edgeberg <eldon_r@users.sf.net>
  */
 public class frmCustomiseQIF extends javax.swing.JFrame {
 

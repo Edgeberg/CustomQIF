@@ -1,10 +1,5 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * frmNarrationOnly.java
+ * $Id: frmNarrationOnly.java 22 2010-03-24 14:16:47Z eldon_r $
  *
  * Created on 06/12/2009, 11:35:45 PM
  */
