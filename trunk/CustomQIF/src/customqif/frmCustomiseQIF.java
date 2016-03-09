@@ -1,5 +1,5 @@
 /*
- * $Id: frmCustomiseQIF.java 22 2010-03-24 14:16:47Z eldon_r $
+ * $Id: frmCustomiseQIF.java 24 2010-03-25 13:52:46Z eldon_r $
  *
  * Created on 20 March 2007, 01:09
  *
@@ -40,6 +40,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     Boolean aryKeep[] = null;
     String strNarrationPatterns = "";
     String aryNarrationPatterns[];
+    String strPatternFile = "";
 
     /** Creates new form frmCustomiseQIF */
     public frmCustomiseQIF() {
@@ -56,8 +57,8 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             }
         });
 
-        loadGrid();
         loadState();
+        loadGrid();
     }
 
     /** This method is called from within the constructor to
@@ -88,6 +89,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         mFile = new javax.swing.JMenu();
         miOpen = new javax.swing.JMenuItem();
         miSave = new javax.swing.JMenuItem();
+        miSaveAs = new javax.swing.JMenuItem();
         miQuit = new javax.swing.JMenuItem();
         mOptions = new javax.swing.JMenu();
         miNarrationOnly = new javax.swing.JMenuItem();
@@ -238,8 +240,8 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         mFile.setText("File");
 
         miOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        miOpen.setMnemonic('L');
-        miOpen.setText("Load");
+        miOpen.setMnemonic('O');
+        miOpen.setText("Open");
         miOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miOpenActionPerformed(evt);
@@ -256,6 +258,15 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             }
         });
         mFile.add(miSave);
+
+        miSaveAs.setMnemonic('A');
+        miSaveAs.setText("Save As...");
+        miSaveAs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miSaveAsActionPerformed(evt);
+            }
+        });
+        mFile.add(miSaveAs);
 
         miQuit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
         miQuit.setMnemonic('Q');
@@ -381,7 +392,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLearnActionPerformed
 
     private void miOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miOpenActionPerformed
-        loadGrid();
+        frmLoadSave fls = null;
+        fls = new frmLoadSave(this, false, System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
+        fls.setVisible(true);
     }//GEN-LAST:event_miOpenActionPerformed
 
     private void btnExecuteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExecuteActionPerformed
@@ -448,6 +461,17 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     }//GEN-LAST:event_btnDownActionPerformed
 
     /**
+     * Event handler for the "File \ Save As" menu item
+     * @param evt The event that caused the action to be performed
+     */
+    private void miSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveAsActionPerformed
+        frmLoadSave fls = null;
+        fls = new frmLoadSave(this, true, System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
+        fls.setVisible(true);
+    }//GEN-LAST:event_miSaveAsActionPerformed
+
+    /**
+     * The main member, which receives initial program control
      * @param args the command line arguments
      */
     public static void main(String args[]) {
@@ -459,6 +483,11 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         });
     }
 
+    /**
+     * Function to eliminate nulls (changes a null to an empty string, otherwise returns the input string)
+     * @param strString
+     * @return a String, which will be "" if strString is null, otherwise = strString
+     */
     private String nvl(String strString) {
         if (strString == null) {
             return "";
@@ -475,6 +504,12 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Show a dialog box indicating a given error condition
+     * @param window The parent window of the dialog box
+     * @param errorText What error text to show
+     * @param dialogTitle The dialog box title text
+     */
     public void handleException(Component window, String errorText, String dialogTitle) {
         //if (getOption("HitAuthor", false).equals("Yes")) {
         //    System.err.println("Author email not implemented...");
@@ -485,7 +520,10 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(window, errorText, dialogTitle, JOptionPane.ERROR_MESSAGE);
     }
 
-    public void tabStrToArray () {
+    /**
+     * Split the tab-delimited string strNarrationPatterns into the string array aryNarrationPatterns
+     */
+    public void tabStrToArray() {
         if (!strNarrationPatterns.trim().equals("")) {
             aryNarrationPatterns = strNarrationPatterns.split("\t");
         } else {
@@ -612,7 +650,10 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         }
     }
 
-    private void loadGrid() {
+    /**
+     * Load the working grid from the specified data file
+     */
+    public void loadGrid() {
         int r, rows;
         String strLine;
         String[] ary;
@@ -620,7 +661,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         // First see if the .CustomQIF directory exists and create it if not
         File myProgramDir = new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
         if (!myProgramDir.mkdirs()) {
-            File myStartupFile = new File(myProgramDir, "Patterns");
+            File myStartupFile = new File(myProgramDir, strPatternFile + ".Patterns");
             if (myStartupFile.exists()) {
                 // Get a copy of the table structure
                 DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
@@ -638,6 +679,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                     }
                     in.close();
                     stringTable.setModel(tableModel);
+                    this.setTitle("CustomiseQIF: " + strPatternFile);
                 } catch (IOException ex) {
                     handleException(this, "Error while reading '" + myStartupFile.getAbsolutePath() + "': " + ex.toString(), "miOpenActionPerformed subroutine");
                 }
@@ -645,9 +687,8 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         }
     }
 
-    private void saveGrid() {
+    public void saveGrid() {
         int r, c, rows, columns;
-        boolean mkdirStatus;
         File myProgramDir = new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
         if (!myProgramDir.exists()) {
             myProgramDir.mkdirs();
@@ -656,7 +697,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
             rows = tableModel.getRowCount();
             columns = tableModel.getColumnCount();
-            File myStartupFile = new File(myProgramDir, "Patterns");
+            File myStartupFile = new File(myProgramDir, strPatternFile + ".Patterns");
             try {
                 BufferedWriter out = new BufferedWriter(new FileWriter(myStartupFile));
                 for (r = 0; r < rows; r++) {
@@ -669,6 +710,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                     out.write("\n");
                 }
                 out.close();
+                this.setTitle("CustomiseQIF: " + strPatternFile);
             } catch (IOException ex) {
                 handleException(this, "Error while writing '" + myStartupFile.getAbsolutePath() + "': " + ex.toString(), "miSaveActionPerformed subroutine");
             }
@@ -707,6 +749,14 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                 out.newLine();
                 out.write("NarrationOnlyPatterns = " + strNarrationPatterns);
                 out.newLine();
+                out.write("PatternFile = " + strPatternFile);
+                out.newLine();
+                out.write("Geometry = " +
+                        String.valueOf(this.getLocation().x) + "," +
+                        String.valueOf(this.getLocation().y) + "," +
+                        String.valueOf(this.getSize().width) + "," +
+                        String.valueOf(this.getSize().height));
+                out.newLine();
                 out.close();
             } catch (IOException ex) {
                 handleException(this, "Error while writing '" + myStateFile.getAbsolutePath() + "': " + ex.toString(), "miSaveActionPerformed subroutine");
@@ -721,6 +771,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         int intEqOffset = 0;
         String strKey = "";
         String strValue = "";
+        String aryGeom[] = {"","","",""};
 
         // First see if the .CustomQIF directory exists and create it if not
         File myProgramDir = new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
@@ -740,6 +791,16 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                                 ctlInputFile.setText(strValue);
                             } else if (strKey.equals("outputfile")) {
                                 ctlOutputFile.setText(strValue);
+                            } else if (strKey.equals("patternfile")) {
+                                strPatternFile = strValue;
+                            } else if (strKey.equals("geometry")) {
+                                aryGeom = strValue.split(",");
+                                int intX = Integer.valueOf(aryGeom[0]);
+                                int intY = Integer.valueOf(aryGeom[1]);
+                                int intWidth = Integer.valueOf(aryGeom[2]);
+                                int intHeight = Integer.valueOf(aryGeom[3]);
+                                this.setLocation(intX, intY);
+                                this.setSize(intWidth, intHeight);
                             } else if (strKey.equals("narrationonlypatterns")) {
                                 strNarrationPatterns = strValue;
                                 tabStrToArray();
@@ -948,6 +1009,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     private javax.swing.JMenuItem miOpen;
     private javax.swing.JMenuItem miQuit;
     private javax.swing.JMenuItem miSave;
+    private javax.swing.JMenuItem miSaveAs;
     private javax.swing.JTable stringTable;
     // End of variables declaration//GEN-END:variables
 }
