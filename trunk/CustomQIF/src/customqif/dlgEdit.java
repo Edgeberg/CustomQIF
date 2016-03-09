@@ -1,5 +1,5 @@
 /*
- * $Id: dlgEdit.java 30 2014-03-30 10:11:30Z eldon_r $
+ * $Id: dlgEdit.java 31 2014-04-06 14:08:30Z eldon_r $
  *
  * dlgEdit.java
  *
@@ -22,7 +22,22 @@ public class dlgEdit extends javax.swing.JDialog {
 
     frmCustomiseQIF parent;
     int rowBeingEdited = -1;
+    String strTransactionNarration = "";
     boolean blnNewTransaction = false;
+    
+    private void checkMatch(String strTxt, String strPattern) {
+        try {
+            if (strTxt.matches(strPattern)) {
+                lblMatchIndicator.setText("Pattern currently matches this transaction");
+            } else {
+                lblMatchIndicator.setText("Pattern does not currently match this transaction");
+            }
+            lblMatchIndicator.setToolTipText("Click here to re-check");
+        } catch (java.util.regex.PatternSyntaxException pe1) {
+            lblMatchIndicator.setText("Pattern has a syntax error");
+            lblMatchIndicator.setToolTipText("Error text: '" + pe1.getDescription() + "'");
+        }
+    }
 
     /** Creates new form dlgEdit */
     public dlgEdit(frmCustomiseQIF parentForm, boolean modal,
@@ -45,13 +60,15 @@ public class dlgEdit extends javax.swing.JDialog {
             jtaTransaction.setText(strTransactionLines);
             blnNewTransaction = true;
         }
-        jtfNarration.setText(strNarration);
+        jtfNarration.setText(java.util.regex.Matcher.quoteReplacement(strNarration)); // Escape the text for use as a regexp
+        strTransactionNarration=strNarration;
         jtfTransactionType.setText(strTransactionType);
         jtfAccount.setText(strReplacement);
         jcbAccount.setModel(model);
         if (model.getIndexOf(strReplacement) >= 0) {
             jcbAccount.setSelectedItem(strReplacement);
         }
+        checkMatch(strNarration, jtfNarration.getText());
     }
 
     /** This method is called from within the constructor to
@@ -68,6 +85,7 @@ public class dlgEdit extends javax.swing.JDialog {
         lblTransaction = new javax.swing.JLabel();
         jspTransaction = new javax.swing.JScrollPane();
         jtaTransaction = new javax.swing.JTextArea();
+        lblMatchIndicator = new javax.swing.JLabel();
         jpNarration = new javax.swing.JPanel();
         lblPattern = new javax.swing.JLabel();
         jtfNarration = new javax.swing.JTextField();
@@ -89,30 +107,43 @@ public class dlgEdit extends javax.swing.JDialog {
         lblTransaction.setLabelFor(jspTransaction);
         lblTransaction.setText("Unmatched Record:");
 
-        jtaTransaction.setColumns(20);
         jtaTransaction.setEditable(false);
+        jtaTransaction.setColumns(20);
         jtaTransaction.setRows(5);
         jspTransaction.setViewportView(jtaTransaction);
+
+        lblMatchIndicator.setBackground(java.awt.SystemColor.info);
+        lblMatchIndicator.setForeground(java.awt.SystemColor.infoText);
+        lblMatchIndicator.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblMatchIndicator.setText("Current pattern does not match");
+        lblMatchIndicator.setOpaque(true);
+        lblMatchIndicator.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblMatchIndicatorMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jpTransactionLayout = new javax.swing.GroupLayout(jpTransaction);
         jpTransaction.setLayout(jpTransactionLayout);
         jpTransactionLayout.setHorizontalGroup(
             jpTransactionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpTransactionLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jpTransactionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jspTransaction, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE)
                     .addGroup(jpTransactionLayout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addComponent(lblTransaction, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jpTransactionLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jspTransaction)))
+                        .addComponent(lblTransaction)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblMatchIndicator)))
                 .addContainerGap())
         );
         jpTransactionLayout.setVerticalGroup(
             jpTransactionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpTransactionLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblTransaction)
+                .addGroup(jpTransactionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblTransaction)
+                    .addComponent(lblMatchIndicator))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jspTransaction, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE))
         );
@@ -121,6 +152,12 @@ public class dlgEdit extends javax.swing.JDialog {
         lblPattern.setText("Pattern for matching the description / narration*");
         lblPattern.setToolTipText("Optionally, to also match on transaction date and/or amount, add these at the end of the narration pattern separated by a vertical bar (|) (i.e., in that order)");
 
+        jtfNarration.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jtfNarrationPropertyChange(evt);
+            }
+        });
+
         javax.swing.GroupLayout jpNarrationLayout = new javax.swing.GroupLayout(jpNarration);
         jpNarration.setLayout(jpNarrationLayout);
         jpNarrationLayout.setHorizontalGroup(
@@ -128,8 +165,8 @@ public class dlgEdit extends javax.swing.JDialog {
             .addGroup(jpNarrationLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpNarrationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblPattern, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jtfNarration))
+                    .addComponent(jtfNarration, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE)
+                    .addComponent(lblPattern, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jpNarrationLayout.setVerticalGroup(
@@ -149,7 +186,7 @@ public class dlgEdit extends javax.swing.JDialog {
             .addGroup(jpTransactionTypeLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpTransactionTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblTransactionType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblTransactionType, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE)
                     .addComponent(jtfTransactionType))
                 .addContainerGap())
         );
@@ -282,6 +319,19 @@ public class dlgEdit extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_jcbAccountActionPerformed
 
+    private void jtfNarrationKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtfNarrationKeyTyped
+        //checkMatch(strTransactionNarration, jtfNarration.getText());
+    }//GEN-LAST:event_jtfNarrationKeyTyped
+
+    private void jtfNarrationPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jtfNarrationPropertyChange
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jtfNarrationPropertyChange
+
+    private void lblMatchIndicatorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblMatchIndicatorMouseClicked
+        // TODO add your handling code here:
+        checkMatch(strTransactionNarration, jtfNarration.getText());
+    }//GEN-LAST:event_lblMatchIndicatorMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnOK;
@@ -296,6 +346,7 @@ public class dlgEdit extends javax.swing.JDialog {
     private javax.swing.JTextField jtfAccount;
     private javax.swing.JTextField jtfNarration;
     private javax.swing.JTextField jtfTransactionType;
+    private javax.swing.JLabel lblMatchIndicator;
     private javax.swing.JLabel lblNewAccount;
     private javax.swing.JLabel lblPattern;
     private javax.swing.JLabel lblReplacementAccount;
