@@ -1,5 +1,5 @@
 /*
- * $Id: dlgEdit.java 36 2014-09-30 14:55:08Z eldon_r $
+ * $Id: dlgEdit.java 37 2014-10-06 13:11:38Z eldon_r $
  *
  * dlgEdit.java
  *
@@ -82,7 +82,13 @@ public class dlgEdit extends javax.swing.JDialog {
             jtaTransaction.setText(strTransactionLines);
             blnNewTransaction = true;
         }
-        jtfNarration.setText(java.util.regex.Matcher.quoteReplacement(strNarration.replace("(", "[(]").replace(")", "[)]").replace("*", "[*]"))); // Escape the text for use as a regexp
+        String strNarrPattern = strNarration;
+        if (blnNewTransaction) {
+            // Escape the narration text for use as a regexp, but only if this is a new transaction, otherwise it's already been done:
+            strNarrPattern = java.util.regex.Matcher.quoteReplacement(strNarrPattern);
+            strNarrPattern = strNarrPattern.replaceAll("[(]", "[(]").replaceAll("[)]", "[)]").replaceAll("[*]","[*]").replaceAll("[.]", "[.]");
+        }
+        jtfNarration.setText(strNarrPattern);
         strTransactionNarrationToMatch=strNarration;
         strTransactionTypeToMatch=strTransactionType;
         jtfTransactionType.setText(strTransactionType);
