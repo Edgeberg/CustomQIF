@@ -54,11 +54,14 @@
             <Property name="text" type="java.lang.String" value="Options"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="miOption1">
+            <MenuItem class="javax.swing.JMenuItem" name="miNarrationOnly">
               <Properties>
-                <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Reserved for Future Expansion"/>
+                <Property name="text" type="java.lang.String" value="Narration Only transactions to avoid combining"/>
+                <Property name="toolTipText" type="java.lang.String" value="Configure a list of patterns that represent narrations that stand by themselves"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miNarrationOnlyActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>
