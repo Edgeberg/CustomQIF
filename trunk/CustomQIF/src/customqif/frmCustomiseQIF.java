@@ -72,10 +72,8 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         btnAdd = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
         btnRemove = new javax.swing.JButton();
-        jSeparator1 = new javax.swing.JSeparator();
         btnUp = new javax.swing.JButton();
         btnDown = new javax.swing.JButton();
-        jSeparator2 = new javax.swing.JSeparator();
         btnSave = new javax.swing.JButton();
         btnLoad = new javax.swing.JButton();
         btnExecute = new javax.swing.JButton();
@@ -84,6 +82,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         ctlInputFile = new javax.swing.JTextField();
         btnOutputFile = new javax.swing.JButton();
         ctlOutputFile = new javax.swing.JTextField();
+        btnFind = new javax.swing.JButton();
         mb = new javax.swing.JMenuBar();
         mFile = new javax.swing.JMenu();
         miOpen = new javax.swing.JMenuItem();
@@ -94,6 +93,8 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Customise QIF files downloaded from the bank");
+
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(600, 402));
 
         stringTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -115,6 +116,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 
         btnAdd.setMnemonic('A');
         btnAdd.setText("Add");
+        btnAdd.setMaximumSize(new java.awt.Dimension(75, 29));
+        btnAdd.setMinimumSize(new java.awt.Dimension(75, 29));
+        btnAdd.setPreferredSize(new java.awt.Dimension(75, 29));
         btnAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAddActionPerformed(evt);
@@ -123,9 +127,15 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 
         btnEdit.setMnemonic('E');
         btnEdit.setText("Edit");
+        btnEdit.setMaximumSize(new java.awt.Dimension(75, 29));
+        btnEdit.setMinimumSize(new java.awt.Dimension(75, 29));
+        btnEdit.setPreferredSize(new java.awt.Dimension(75, 29));
 
         btnRemove.setMnemonic('R');
         btnRemove.setText("Remove");
+        btnRemove.setMaximumSize(new java.awt.Dimension(75, 29));
+        btnRemove.setMinimumSize(new java.awt.Dimension(75, 29));
+        btnRemove.setPreferredSize(new java.awt.Dimension(75, 29));
         btnRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRemoveActionPerformed(evt);
@@ -134,13 +144,32 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 
         btnUp.setMnemonic('U');
         btnUp.setText("Up");
+        btnUp.setMaximumSize(new java.awt.Dimension(75, 29));
+        btnUp.setMinimumSize(new java.awt.Dimension(75, 29));
+        btnUp.setPreferredSize(new java.awt.Dimension(75, 29));
+        btnUp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpActionPerformed(evt);
+            }
+        });
 
         btnDown.setMnemonic('D');
         btnDown.setText("Down");
+        btnDown.setMaximumSize(new java.awt.Dimension(75, 29));
+        btnDown.setMinimumSize(new java.awt.Dimension(75, 29));
+        btnDown.setPreferredSize(new java.awt.Dimension(75, 29));
+        btnDown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDownActionPerformed(evt);
+            }
+        });
 
         btnSave.setMnemonic('S');
         btnSave.setText("Save");
         btnSave.setToolTipText("Save this setup");
+        btnSave.setMaximumSize(new java.awt.Dimension(75, 29));
+        btnSave.setMinimumSize(new java.awt.Dimension(75, 29));
+        btnSave.setPreferredSize(new java.awt.Dimension(75, 29));
         btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miSaveActionPerformed(evt);
@@ -149,6 +178,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 
         btnLoad.setMnemonic('L');
         btnLoad.setText("Load");
+        btnLoad.setMaximumSize(new java.awt.Dimension(75, 29));
+        btnLoad.setMinimumSize(new java.awt.Dimension(75, 29));
+        btnLoad.setPreferredSize(new java.awt.Dimension(75, 29));
         btnLoad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miOpenActionPerformed(evt);
@@ -158,6 +190,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         btnExecute.setMnemonic('x');
         btnExecute.setText("Execute");
         btnExecute.setToolTipText("Do the operation");
+        btnExecute.setMaximumSize(new java.awt.Dimension(75, 29));
+        btnExecute.setMinimumSize(new java.awt.Dimension(75, 29));
+        btnExecute.setPreferredSize(new java.awt.Dimension(75, 29));
         btnExecute.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnExecuteActionPerformed(evt);
@@ -166,6 +201,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 
         btnLearn.setMnemonic('N');
         btnLearn.setText("Learn");
+        btnLearn.setMaximumSize(new java.awt.Dimension(75, 29));
+        btnLearn.setMinimumSize(new java.awt.Dimension(75, 29));
+        btnLearn.setPreferredSize(new java.awt.Dimension(75, 29));
         btnLearn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLearnActionPerformed(evt);
@@ -187,6 +225,13 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                 btnOutputFileActionPerformed(evt);
             }
         });
+
+        btnFind.setMnemonic('R');
+        btnFind.setText("Find");
+        btnFind.setDisplayedMnemonicIndex(0);
+        btnFind.setMaximumSize(new java.awt.Dimension(75, 29));
+        btnFind.setMinimumSize(new java.awt.Dimension(75, 29));
+        btnFind.setPreferredSize(new java.awt.Dimension(75, 29));
 
         mFile.setMnemonic('F');
         mFile.setText("File");
@@ -246,28 +291,27 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 675, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
                             .add(btnOutputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(btnInputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                            .add(ctlOutputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 558, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.LEADING, ctlInputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 558, Short.MAX_VALUE))))
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(ctlOutputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
+                            .add(ctlInputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(btnLoad, 0, 0, Short.MAX_VALUE)
-                    .add(btnUp, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(btnAdd, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(btnEdit, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(btnRemove, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(jSeparator1)
-                    .add(jSeparator2)
-                    .add(btnDown, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(btnSave, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(btnExecute, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(btnLearn, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(btnExecute, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
+                    .add(btnLoad, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
+                    .add(btnUp, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
+                    .add(btnDown, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
+                    .add(btnRemove, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
+                    .add(btnFind, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
+                    .add(btnEdit, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, btnAdd, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
+                    .add(btnSave, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
+                    .add(btnLearn, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -276,7 +320,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
+                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                             .add(btnInputFile)
@@ -286,29 +330,36 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                             .add(btnOutputFile)
                             .add(ctlOutputFile, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(btnAdd)
+                        .add(btnAdd, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(btnEdit)
+                        .add(btnEdit, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(btnRemove)
+                        .add(btnRemove, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(6, 6, 6)
+                        .add(btnFind, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(18, 18, 18)
+                        .add(btnUp, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(btnDown, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(18, 18, 18)
+                        .add(btnSave, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(btnUp)
+                        .add(btnLoad, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 126, Short.MAX_VALUE)
+                        .add(btnExecute, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(btnDown)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jSeparator2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(btnSave)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(btnLoad)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 153, Short.MAX_VALUE)
-                        .add(btnExecute)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(btnLearn)))
+                        .add(btnLearn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
+
+        btnAdd.getAccessibleContext().setAccessibleDescription("Add a row");
+        btnEdit.getAccessibleContext().setAccessibleDescription("Edit selected row");
+        btnRemove.getAccessibleContext().setAccessibleDescription("Remove rows");
+        btnUp.getAccessibleContext().setAccessibleDescription("Move selected rows up");
+        btnDown.getAccessibleContext().setAccessibleDescription("Move selected rows down");
+        btnSave.getAccessibleContext().setAccessibleDescription("Save grid data");
+        btnLoad.getAccessibleContext().setAccessibleDescription("Load grid data");
+        btnFind.getAccessibleContext().setAccessibleDescription("Find");
 
         getAccessibleContext().setAccessibleName("Customise QIF");
         getAccessibleContext().setAccessibleDescription("Customise QIF files downloaded from the bank");
@@ -359,13 +410,41 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
-        tableModel.addRow(new Object[]{"", "", ""});
+        if (stringTable.getSelectedRowCount() > 0) {
+            tableModel.insertRow(stringTable.getSelectedRow(), (Object[]) null);
+        } else tableModel.addRow(new Object[]{"", "", ""});
         stringTable.setModel(tableModel);
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void miNarrationOnlyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miNarrationOnlyActionPerformed
         new frmNarrationOnly(this, strNarrationPatterns).setVisible(true);
     }//GEN-LAST:event_miNarrationOnlyActionPerformed
+
+    private void btnUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpActionPerformed
+        if (stringTable.getSelectedRowCount() > 0 && ! stringTable.isRowSelected(0)) {
+            DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
+            for (int i=1 ; i<stringTable.getRowCount() ; i++) {
+                if (stringTable.isRowSelected(i)) {
+                    tableModel.moveRow(i, i, i - 1);
+                }
+            }
+            stringTable.setModel(tableModel);
+            stringTable.changeSelection(stringTable.getSelectedRow() - 1, stringTable.getSelectedColumn(), false, false);
+        }
+    }//GEN-LAST:event_btnUpActionPerformed
+
+    private void btnDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDownActionPerformed
+        if (stringTable.getSelectedRowCount() > 0 && ! stringTable.isRowSelected(stringTable.getRowCount() - 1)) {
+            DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
+            for (int i=stringTable.getRowCount() - 2 ; i>0 ; i--) {
+                if (stringTable.isRowSelected(i)) {
+                    tableModel.moveRow(i, i, i + 1);
+                }
+            }
+            stringTable.setModel(tableModel);
+            stringTable.changeSelection(stringTable.getSelectedRow() + 1, stringTable.getSelectedColumn(), false, false);
+        }
+    }//GEN-LAST:event_btnDownActionPerformed
 
     /**
      * @param args the command line arguments
@@ -502,19 +581,19 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                     }
                     if (!learn && aryKeep[e]) {
                         if (aryQIF[e][L] != null) {
-                            out.write(aryQIF[e][L] + "\n");
+                            out.write("L" + aryQIF[e][L] + "\n");
                         }
                         if (aryQIF[e][D] != null) {
-                            out.write(aryQIF[e][D] + "\n");
+                            out.write("D" + aryQIF[e][D] + "\n");
                         }
                         if (aryQIF[e][M] != null) {
-                            out.write(aryQIF[e][M] + "\n");
+                            out.write("M" + aryQIF[e][M] + "\n");
                         }
                         if (aryQIF[e][N] != null) {
-                            out.write(aryQIF[e][N] + "\n");
+                            out.write("N" + aryQIF[e][N] + "\n");
                         }
                         if (aryQIF[e][T] != null) {
-                            out.write(aryQIF[e][T] + "\n");
+                            out.write("T" + aryQIF[e][T] + "\n");
                         }
                         out.write("^\n");
                     }
@@ -700,7 +779,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         while (!matchExists && i<aryToSearch.length) {
             strFromArray = aryToSearch[i].replaceAll("[(]", "\\[\\(\\]");
             strFromArray = strFromArray.replaceAll("[)]", "\\[\\)\\]");
-            if (strToMatch.matches("M" + strFromArray)) {
+            if (strToMatch.matches(strFromArray)) {
                 matchExists = true;
             }
             i++;
@@ -753,31 +832,31 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                     // Fix missing L tags
                     if (aryQIF[intElement][L] == null) {
                         if (aryQIF[intElement][N] != null) {
-                            aryQIF[intElement][L] = "LCHECK";
+                            aryQIF[intElement][L] = "CHECK";
                         } else if (aryQIF[intElement][M].indexOf("DEPOSIT") > 0
-                                && aryQIF[intElement][T].charAt(1) != '-') {
-                            aryQIF[intElement][L] = "LDEP";
+                                && aryQIF[intElement][T].charAt(0) != '-') {
+                            aryQIF[intElement][L] = "DEP";
                         } else if (aryQIF[intElement][M].indexOf("PERIODIC PAY") > 0
-                                && aryQIF[intElement][T].charAt(1) == '-') {
-                            aryQIF[intElement][L] = "LREPEATPMT";
+                                && aryQIF[intElement][T].charAt(0) == '-') {
+                            aryQIF[intElement][L] = "REPEATPMT";
                         } else if (aryQIF[intElement][M].indexOf("T'FER") > 0
                                 || aryQIF[intElement][M].indexOf("TFR") > 0) {
-                            aryQIF[intElement][L] = "LXFER";
+                            aryQIF[intElement][L] = "XFER";
                         } else if (aryQIF[intElement][M].indexOf("WITHDRAWAL") > 0) {
-                            aryQIF[intElement][L] = "LDEBIT";
-                        } else if (aryQIF[intElement][T].charAt(1) == '-') {
-                            aryQIF[intElement][L] = "LPAYMENT";
-                        } else if (!aryQIF[intElement][T].equals("T0")) {
-                            aryQIF[intElement][L] = "LDEP";
-                        } else if (aryQIF[intElement][T].equals("T0")) {
-                            aryQIF[intElement][L] = "LINFO";
+                            aryQIF[intElement][L] = "DEBIT";
+                        } else if (aryQIF[intElement][T].charAt(0) == '-') {
+                            aryQIF[intElement][L] = "PAYMENT";
+                        } else if (!aryQIF[intElement][T].equals("0")) {
+                            aryQIF[intElement][L] = "DEP";
+                        } else if (aryQIF[intElement][T].equals("0")) {
+                            aryQIF[intElement][L] = "INFO";
                         }
                     }
                     intElement++;
                 } else if (strLine.length() > 0) {
                     intType = strTypes.indexOf(strLine.charAt(0));
                     if (intType >= 0) {
-                        aryQIF[intElement][intType] = strLine;
+                        aryQIF[intElement][intType] = strLine.substring(1);
                     }
                 }
             }
@@ -795,29 +874,29 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                     if (aryKeep[i]) {
                         // See if there is a narration to add from one transaction below
                         if ((i + 1) < intElements) {
-                            if (aryQIF[i][M].equals("MLOAN INTEREST")) {
+                            if (aryQIF[i][M].equals("LOAN INTEREST")) {
                                 // These ones (almost?) always have a 2nd narration of a known pattern after them, either immediately or a bit later:
                                 boolean blnLIdone = false;
                                 for (int li = 1 ; (i + li < intElements) && (li < 16) && !blnLIdone ; li++) {
-                                    if (aryKeep[i + li] && aryQIF[i + li][M].matches("MPAYMENT ALTERED .*")) {
-                                        aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + li][M].substring(1);
+                                    if (aryKeep[i + li] && aryQIF[i + li][M].matches("PAYMENT ALTERED .*")) {
+                                        aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + li][M];
                                         aryKeep[i + li] = false;
                                         blnLIdone = true;
                                     }
                                 }
-                            } else if (!aryQIF[i][T].equals("T0") && aryQIF[i + 1][T].equals("T0") && !matchesArrayElement(aryQIF[i + 1][M], aryNarrationPatterns)) {
-                                aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + 1][M].substring(1);
+                            } else if (!aryQIF[i][T].equals("0") && aryQIF[i + 1][T].equals("0") && !matchesArrayElement(aryQIF[i + 1][M], aryNarrationPatterns)) {
+                                aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + 1][M];
                                 aryKeep[i + 1] = false;
                                 // Sometimes there will be additional narrations below
                                 if ((i + 2) < intElements) {
                                     // Only if same date as first extra narration
-                                    if (aryQIF[i + 2][D].equals(aryQIF[i + 1][D]) && aryQIF[i + 2][T].equals("T0") && !matchesArrayElement(aryQIF[i + 2][M], aryNarrationPatterns)) {
-                                        aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + 2][M].substring(1);
+                                    if (aryQIF[i + 2][D].equals(aryQIF[i + 1][D]) && aryQIF[i + 2][T].equals("0") && !matchesArrayElement(aryQIF[i + 2][M], aryNarrationPatterns)) {
+                                        aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + 2][M];
                                         aryKeep[i + 2] = false;
                                         if ((i + 3) < intElements) {
                                             // Only if same date as first extra narration
-                                            if (aryQIF[i + 3][D].equals(aryQIF[i + 1][D]) && aryQIF[i + 3][T].equals("T0") && !matchesArrayElement(aryQIF[i + 3][M], aryNarrationPatterns)) {
-                                                aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + 3][M].substring(1);
+                                            if (aryQIF[i + 3][D].equals(aryQIF[i + 1][D]) && aryQIF[i + 3][T].equals("0") && !matchesArrayElement(aryQIF[i + 3][M], aryNarrationPatterns)) {
+                                                aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + 3][M];
                                                 aryKeep[i + 3] = false;
                                             }
                                         }
@@ -827,7 +906,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                         }
                         for (int j = 0; j < 5; j++) {
                             if (aryQIF[i][j] != null) {
-                                out.write(aryQIF[i][j] + "\n");
+                                out.write(strTypes.charAt(j) + aryQIF[i][j] + "\n");
                             }
                         }
                         out.write("^\n");
@@ -850,6 +929,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     private javax.swing.JButton btnDown;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnExecute;
+    private javax.swing.JButton btnFind;
     private javax.swing.JButton btnInputFile;
     private javax.swing.JButton btnLearn;
     private javax.swing.JButton btnLoad;
@@ -860,8 +940,6 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     private javax.swing.JTextField ctlInputFile;
     private javax.swing.JTextField ctlOutputFile;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JMenu mFile;
     private javax.swing.JMenu mOptions;
     private javax.swing.JMenuBar mb;
