@@ -1,5 +1,5 @@
 /*
- * $Id: dlgEdit.java 33 2014-09-07 16:03:36Z eldon_r $
+ * $Id: dlgEdit.java 34 2014-09-28 09:11:46Z eldon_r $
  *
  * dlgEdit.java
  *
@@ -16,7 +16,7 @@ package customqif;
 
 /**
  *
- * @author Eldon
+ * @author Edgeberg <eldon_r@users.sf.net>
  */
 public class dlgEdit extends javax.swing.JDialog {
 
@@ -27,14 +27,19 @@ public class dlgEdit extends javax.swing.JDialog {
     boolean blnNewTransaction = false;
     
     private void checkMatch(String strPattern, String strTypePattern, String strTxt, String strType, String strTransactionLines) {
+        
+        String strTL = parent.nvl(strTransactionLines).concat(" \n \n \n \n \n ");
+        String[] strTLA = strTL.split("\n");
+        String strDate = strTLA[2].trim();
+        String strAmount = strTLA[3].trim();
         try {
             if (parent.matchTransaction(
                     strPattern,
                     strTypePattern,
                     strTxt,
                     strType,
-                    strTransactionLines.concat("\n\n\n\n\n").split("\n")[2],
-                    strTransactionLines.concat("\n\n\n\n\n").split("\n")[3])) {
+                    strDate,
+                    strAmount)) {
                 lblMatchIndicator.setText("Pattern currently matches this transaction");
             } else {
                 lblMatchIndicator.setText("Pattern does not currently match this transaction");
