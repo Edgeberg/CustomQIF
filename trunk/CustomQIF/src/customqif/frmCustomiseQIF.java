@@ -1,5 +1,5 @@
 /*
- * $Id: frmCustomiseQIF.java 24 2010-03-25 13:52:46Z eldon_r $
+ * $Id: frmCustomiseQIF.java 26 2011-11-27 08:19:46Z eldon_r $
  *
  * Created on 20 March 2007, 01:09
  *
@@ -17,6 +17,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import javax.swing.JOptionPane;
+import javax.swing.event.ListDataListener;
 import javax.swing.table.DefaultTableModel;
 // import javax.swing.table.TableModel;
 
@@ -41,6 +42,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     String strNarrationPatterns = "";
     String aryNarrationPatterns[];
     String strPatternFile = "";
+    DefaultTableModel tableModelInProgress;
 
     /** Creates new form frmCustomiseQIF */
     public frmCustomiseQIF() {
@@ -68,7 +70,10 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
+        jpmTableContext = new javax.swing.JPopupMenu();
+        jmiEdit = new javax.swing.JMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
         stringTable = new javax.swing.JTable();
         btnAdd = new javax.swing.JButton();
@@ -94,6 +99,20 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         mOptions = new javax.swing.JMenu();
         miNarrationOnly = new javax.swing.JMenuItem();
 
+        jpmTableContext.setInvoker(stringTable);
+
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, btnEdit, org.jdesktop.beansbinding.ELProperty.create("${action}"), jmiEdit, org.jdesktop.beansbinding.BeanProperty.create("action"));
+        bindingGroup.addBinding(binding);
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, btnEdit, org.jdesktop.beansbinding.ELProperty.create("${label}"), jmiEdit, org.jdesktop.beansbinding.BeanProperty.create("label"));
+        bindingGroup.addBinding(binding);
+
+        jmiEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditActionPerformed(evt);
+            }
+        });
+        jpmTableContext.add(jmiEdit);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Customise QIF files downloaded from the bank");
 
@@ -115,6 +134,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
+        stringTable.setComponentPopupMenu(jpmTableContext);
         jScrollPane1.setViewportView(stringTable);
 
         btnAdd.setMnemonic('A');
@@ -133,6 +153,11 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         btnEdit.setMaximumSize(new java.awt.Dimension(75, 29));
         btnEdit.setMinimumSize(new java.awt.Dimension(75, 29));
         btnEdit.setPreferredSize(new java.awt.Dimension(75, 29));
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditActionPerformed(evt);
+            }
+        });
 
         btnRemove.setMnemonic('R');
         btnRemove.setText("Remove");
@@ -376,6 +401,8 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         getAccessibleContext().setAccessibleName("Customise QIF");
         getAccessibleContext().setAccessibleDescription("Customise QIF files downloaded from the bank");
 
+        bindingGroup.bind();
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -470,6 +497,22 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         fls.setVisible(true);
     }//GEN-LAST:event_miSaveAsActionPerformed
 
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+        if ((stringTable.getRowCount() > 1)
+                && (stringTable.getSelectedRowCount() == 1)) {
+            dlgEdit de = null;
+            de = new dlgEdit(this, true,
+                "",
+                stringTable.getValueAt(stringTable.getSelectedRow(),0).toString(),
+                stringTable.getValueAt(stringTable.getSelectedRow(),1).toString(),
+                stringTable.getValueAt(stringTable.getSelectedRow(),2).toString(),
+                getAccountList(),
+                stringTable.getSelectedRow());
+            de.setLocation(getX()+100,getY()+100);
+            de.setVisible(true);
+        }
+    }//GEN-LAST:event_btnEditActionPerformed
+
     /**
      * The main member, which receives initial program control
      * @param args the command line arguments
@@ -548,8 +591,8 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 
         int i = 0;
         int e = 0;
-        DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
-        int rows = tableModel.getRowCount();
+        tableModelInProgress = (DefaultTableModel) stringTable.getModel();
+        int rows = tableModelInProgress.getRowCount();
 
         //status1.setText("Processing...");
         BufferedWriter out = null;
@@ -566,13 +609,13 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                     if (aryQIF[e][M] != null && aryKeep[e]) {
                         blnMatch = false;
                         for (i = 0; (!blnMatch) && (i < rows); i++) {
-                            strSearchDesc = tableModel.getValueAt(i, 0).toString();
+                            strSearchDesc = tableModelInProgress.getValueAt(i, 0).toString();
                             strSearchDesc = strSearchDesc.replaceAll("[(]", "\\[\\(\\]");
                             strSearchDesc = strSearchDesc.replaceAll("[)]", "\\[\\)\\]");
-                            strTypeCode = tableModel.getValueAt(i, 1).toString();
+                            strTypeCode = tableModelInProgress.getValueAt(i, 1).toString();
                             strTypeCode = strTypeCode.replaceAll("[(]", "\\[\\(\\]");
                             strTypeCode = strTypeCode.replaceAll("[)]", "\\[\\)\\]");
-                            strReplaceTypeWith = tableModel.getValueAt(i, 2).toString();
+                            strReplaceTypeWith = tableModelInProgress.getValueAt(i, 2).toString();
                             if (aryQIF[e][M].matches(strSearchDesc) && nvl(aryQIF[e][L]).matches(strTypeCode)) {
                                 blnMatch = true;
                                 aryQIF[e][L] = strReplaceTypeWith;
@@ -608,7 +651,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                                                 + "\n\nFinally, please enter a replacement string for the account name:", aryQIF[e][L]);
                                         blnCancel = strReplaceTypeWith == null;
                                         if (!blnCancel) {
-                                            tableModel.addRow(new Object[]{strSearchDesc, strTypeCode, strReplaceTypeWith});
+                                            tableModelInProgress.addRow(new Object[]{strSearchDesc, strTypeCode, strReplaceTypeWith});
                                             aryQIF[e][L] = strReplaceTypeWith;
                                             rows++;
                                         }
@@ -986,6 +1029,29 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 
         return temp.getAbsolutePath();
     }
+
+    public SortedComboBoxModel getAccountList() {
+        int r, rows;
+        SortedComboBoxModel itemList = new SortedComboBoxModel();
+        DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
+        rows = tableModel.getRowCount();
+        
+        for (r = 0; r < rows; r++) {
+            if (itemList.getIndexOf(tableModel.getValueAt(r, 2)) < 0) {
+                itemList.addElement(tableModel.getValueAt(r, 2));
+            }
+        }
+        return itemList;
+    }
+
+    public void replaceRow(int row, String narration, String xtype, String account) {
+        System.out.println("account="+account+",row="+Integer.toString(row));
+        System.out.println("narration="+narration+",type="+xtype);
+        stringTable.setValueAt(narration, row, 0);
+        stringTable.setValueAt(xtype, row, 1);
+        stringTable.setValueAt(account, row, 2);
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnDown;
@@ -1002,6 +1068,8 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     private javax.swing.JTextField ctlInputFile;
     private javax.swing.JTextField ctlOutputFile;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JMenuItem jmiEdit;
+    private javax.swing.JPopupMenu jpmTableContext;
     private javax.swing.JMenu mFile;
     private javax.swing.JMenu mOptions;
     private javax.swing.JMenuBar mb;
@@ -1011,5 +1079,6 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     private javax.swing.JMenuItem miSave;
     private javax.swing.JMenuItem miSaveAs;
     private javax.swing.JTable stringTable;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }
