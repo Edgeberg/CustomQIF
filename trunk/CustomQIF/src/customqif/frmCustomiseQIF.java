@@ -1,5 +1,5 @@
 /*
- * $Id: frmCustomiseQIF.java 27 2011-11-27 08:24:52Z eldon_r $
+ * $Id: frmCustomiseQIF.java 29 2014-03-30 04:41:52Z eldon_r $
  *
  * Created on 20 March 2007, 01:09
  *
@@ -42,6 +42,8 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     String aryNarrationPatterns[];
     String strPatternFile = "";
     DefaultTableModel tableModelInProgress;
+    boolean blnCancelModalDialog = false;
+    Boolean blnReversedTransactions = false;
 
     /** Creates new form frmCustomiseQIF */
     public frmCustomiseQIF() {
@@ -97,6 +99,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         miQuit = new javax.swing.JMenuItem();
         mOptions = new javax.swing.JMenu();
         miNarrationOnly = new javax.swing.JMenuItem();
+        miReversedTransactions = new javax.swing.JCheckBoxMenuItem();
 
         jpmTableContext.setInvoker(stringTable);
 
@@ -316,6 +319,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         });
         mOptions.add(miNarrationOnly);
 
+        miReversedTransactions.setText("Transactions in Reversed Date Order");
+        mOptions.add(miReversedTransactions);
+
         mb.add(mOptions);
 
         setJMenuBar(mb);
@@ -338,16 +344,16 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(btnExecute, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
-                    .add(btnLoad, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
-                    .add(btnUp, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
-                    .add(btnDown, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
-                    .add(btnRemove, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
-                    .add(btnFind, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
-                    .add(btnEdit, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, btnAdd, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
-                    .add(btnSave, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
-                    .add(btnLearn, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE))
+                    .add(btnExecute, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(btnLoad, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(btnUp, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(btnDown, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(btnRemove, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(btnFind, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(btnEdit, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, btnAdd, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(btnSave, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(btnLearn, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -623,38 +629,24 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                         }
                         if (!blnMatch) {
                             if (learn) {
-                                strSearchDesc = JOptionPane.showInputDialog(this, "Unmatched record:\n"
-                                        + nvl(aryQIF[e][M]) + nnvl(aryQIF[e][M], "\n")
+                                dlgEdit de = null;
+                                de = new dlgEdit(this, true,
+                                          nvl(aryQIF[e][M]) + nnvl(aryQIF[e][M], "\n")
                                         + nvl(aryQIF[e][L]) + nnvl(aryQIF[e][L], "\n")
                                         + nvl(aryQIF[e][D]) + nnvl(aryQIF[e][D], "\n")
                                         + nvl(aryQIF[e][T]) + nnvl(aryQIF[e][T], "\n")
-                                        + nvl(aryQIF[e][N]) + nnvl(aryQIF[e][N], "\n")
-                                        + "\n\nPlease enter a pattern for matching the description:", aryQIF[e][M]);
-                                blnCancel = strSearchDesc == null;
+                                        + nvl(aryQIF[e][N]) + nnvl(aryQIF[e][N], ""),
+                                    aryQIF[e][M],
+                                    aryQIF[e][L],
+                                    aryQIF[e][L],
+                                    getAccountList(),
+                                    -1);
+                                de.setLocation(getX()+jScrollPane1.getWidth()+22,getY()+btnLoad.getY()+mb.getHeight()+btnLoad.getHeight()+35);
+                                de.setVisible(true);
+                                blnCancel = blnCancelModalDialog;
                                 if (!blnCancel) {
-                                    strTypeCode = JOptionPane.showInputDialog(this, "Unmatched record:\n"
-                                            + nvl(aryQIF[e][M]) + nnvl(aryQIF[e][M], "\n")
-                                            + nvl(aryQIF[e][L]) + nnvl(aryQIF[e][L], "\n")
-                                            + nvl(aryQIF[e][D]) + nnvl(aryQIF[e][D], "\n")
-                                            + nvl(aryQIF[e][T]) + nnvl(aryQIF[e][T], "\n")
-                                            + nvl(aryQIF[e][N]) + nnvl(aryQIF[e][N], "\n")
-                                            + "\n\nNow please enter a pattern for matching the account/category name (you usually accept the default):", aryQIF[e][L]);
-                                    blnCancel = strTypeCode == null;
-                                    if (!blnCancel) {
-                                        strReplaceTypeWith = JOptionPane.showInputDialog(this, "Unmatched record:\n"
-                                                + nvl(aryQIF[e][M]) + nnvl(aryQIF[e][M], "\n")
-                                                + nvl(aryQIF[e][L]) + nnvl(aryQIF[e][L], "\n")
-                                                + nvl(aryQIF[e][D]) + nnvl(aryQIF[e][D], "\n")
-                                                + nvl(aryQIF[e][T]) + nnvl(aryQIF[e][T], "\n")
-                                                + nvl(aryQIF[e][N]) + nnvl(aryQIF[e][N], "\n")
-                                                + "\n\nFinally, please enter a replacement string for the account name:", aryQIF[e][L]);
-                                        blnCancel = strReplaceTypeWith == null;
-                                        if (!blnCancel) {
-                                            tableModelInProgress.addRow(new Object[]{strSearchDesc, strTypeCode, strReplaceTypeWith});
-                                            aryQIF[e][L] = strReplaceTypeWith;
-                                            rows++;
-                                        }
-                                    }
+                                    rows++;
+                                    aryQIF[e][L] = tableModelInProgress.getValueAt(rows - 1, 2).toString();
                                 }
                             }
                             blnMatch = false;
@@ -793,6 +785,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                 out.newLine();
                 out.write("PatternFile = " + strPatternFile);
                 out.newLine();
+                blnReversedTransactions = miReversedTransactions.getState();
+                out.write("ReversedTransactions = " + blnReversedTransactions.toString());
+                out.newLine();
                 out.write("Geometry = " +
                         String.valueOf(this.getLocation().x) + "," +
                         String.valueOf(this.getLocation().y) + "," +
@@ -815,6 +810,8 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         String strValue = "";
         String aryGeom[] = {"","","",""};
 
+        blnReversedTransactions = false; // default for when this value not set in State file
+        
         // First see if the .CustomQIF directory exists and create it if not
         File myProgramDir = new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
         if (!myProgramDir.mkdirs()) {
@@ -846,6 +843,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                             } else if (strKey.equals("narrationonlypatterns")) {
                                 strNarrationPatterns = strValue;
                                 tabStrToArray();
+                            } else if (strKey.equals("reversedtransactions")) {
+                                blnReversedTransactions = strValue.equalsIgnoreCase("true");
+                                miReversedTransactions.setSelected(blnReversedTransactions);
                             }
                         }
                         strLine = in.readLine();
@@ -872,7 +872,11 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         }
         dlg.setVisible(true);
         if (dlg.getFile() != null) {
-            ctlInputFile.setText(dlg.getDirectory() + dlg.getFile());
+            if (string.matches(".*Input.*")) {
+                ctlInputFile.setText(dlg.getDirectory() + dlg.getFile());
+            } else {
+                ctlOutputFile.setText(dlg.getDirectory() + dlg.getFile());
+            }
         }
     }
 
@@ -898,6 +902,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         intElement = 0;
         intType = 0;
         strHeader = "";
+        boolean blnDelimiterFound = false;
 
         try {
             temp = File.createTempFile("CustomQIF", ".tmp");
@@ -911,10 +916,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             BufferedReader in1 = new BufferedReader(new FileReader(ctlInputFile.getText()));
             strLine = in1.readLine();
             while ((strLine = in1.readLine()) != null) {
-                if (strLine.length() == 1) {
-                    if (strLine.equalsIgnoreCase("^")) {
-                        intElements++;
-                    }
+                // Handle ^ transaction delimiter either on separate line or at end of a line
+                if (strLine.endsWith("^")) {
+                    intElements++;
                 }
             }
             in1.close();
@@ -931,14 +935,35 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             strLine = in2.readLine();
             strHeader = strLine;
             while ((strLine = in2.readLine()) != null) {
+                // Handle ^ transaction delimiter either on separate line or at end of a line
+                if (!strLine.equals("^") && strLine.length() > 0) {
+                    if (strLine.endsWith("^")) {
+                        blnDelimiterFound = true;
+                        strLine = strLine.substring(0, strLine.length() - 1);
+                    }
+                    intType = strTypes.indexOf(strLine.charAt(0));
+                    if (intType >= 0) {
+                        try {
+                            aryQIF[intElement][intType] = strLine.substring(1);
+                        } catch (ArrayIndexOutOfBoundsException ae) {
+                            handleException(this, "Error while storing array element: " + ae.toString(), "combineNarrations function");
+                        }
+                    }
+                    if (blnDelimiterFound) {
+                        strLine = "^";
+                        blnDelimiterFound = false;
+                    }
+                }
                 if (strLine.equals("^")) {
                     aryKeep[intElement] = true;
                     // Fix missing L tags
                     if (aryQIF[intElement][L] == null) {
                         if (aryQIF[intElement][N] != null) {
                             aryQIF[intElement][L] = "CHECK";
-                        } else if (aryQIF[intElement][M].indexOf("DEPOSIT") >= 0
-                                && aryQIF[intElement][T].charAt(0) != '-') {
+                        } else if ((aryQIF[intElement][M].indexOf("CREDIT ") == 0 &&
+                                   !aryQIF[intElement][M].startsWith("JOURNAL")) ||
+                                (  aryQIF[intElement][M].indexOf("DEPOSIT") >= 0
+                                && aryQIF[intElement][T].charAt(0) != '-')) {
                             aryQIF[intElement][L] = "DEP";
                         } else if (aryQIF[intElement][M].indexOf("PERIODIC PAY") >= 0
                                 && aryQIF[intElement][T].charAt(0) == '-') {
@@ -948,7 +973,10 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                             aryQIF[intElement][L] = "XFER";
                         } else if (aryQIF[intElement][M].indexOf("WITHDRAWAL") >= 0) {
                             aryQIF[intElement][L] = "DEBIT";
-                        } else if (aryQIF[intElement][T].charAt(0) == '-') {
+                        } else if (aryQIF[intElement][T].charAt(0) == '-'
+                                || aryQIF[intElement][M].indexOf("RETAIL PURCHASE") >= 0
+                                || aryQIF[intElement][M].indexOf("BPAY") >= 0
+                                || aryQIF[intElement][M].indexOf("BILL PAYMENT") >= 0) {
                             aryQIF[intElement][L] = "PAYMENT";
                         } else if (!aryQIF[intElement][T].equals("0")) {
                             aryQIF[intElement][L] = "DEP";
@@ -957,11 +985,6 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                         }
                     }
                     intElement++;
-                } else if (strLine.length() > 0) {
-                    intType = strTypes.indexOf(strLine.charAt(0));
-                    if (intType >= 0) {
-                        aryQIF[intElement][intType] = strLine.substring(1);
-                    }
                 }
             }
             in2.close();
@@ -971,6 +994,10 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         }
 
         if (intElement > 0) {
+            blnReversedTransactions = miReversedTransactions.getState();
+            if (blnReversedTransactions) {
+                reverseItems();
+            }
             try {
                 BufferedWriter out = new BufferedWriter(new FileWriter(temp));
                 out.write(strHeader);
@@ -1048,6 +1075,24 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         stringTable.setValueAt(xtype, row, 1);
         stringTable.setValueAt(account, row, 2);
     }
+    
+    public void reverseItems() {
+        String strTemp = "";
+        boolean blnTemp = false;
+        int i = 0, j = aryQIF.length - 1, k = 0;
+        while (i < j) {
+            for (k = 0; k < 5; k++) {
+                strTemp = aryQIF[i][k];
+                aryQIF[i][k] = aryQIF[j][k];
+                aryQIF[j][k] = strTemp;
+            }
+            blnTemp = aryKeep[i];
+            aryKeep[i] = aryKeep[j];
+            aryKeep[j] = blnTemp;
+            i++;
+            j--;
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
@@ -1073,6 +1118,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     private javax.swing.JMenuItem miNarrationOnly;
     private javax.swing.JMenuItem miOpen;
     private javax.swing.JMenuItem miQuit;
+    private javax.swing.JCheckBoxMenuItem miReversedTransactions;
     private javax.swing.JMenuItem miSave;
     private javax.swing.JMenuItem miSaveAs;
     private javax.swing.JTable stringTable;

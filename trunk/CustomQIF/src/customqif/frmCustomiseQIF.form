@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.5" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
@@ -94,6 +94,11 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miNarrationOnlyActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="miReversedTransactions">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Transactions in Reversed Date Order"/>
+              </Properties>
+            </MenuItem>
           </SubComponents>
         </Menu>
       </SubComponents>
@@ -144,16 +149,16 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="btnExecute" alignment="1" pref="75" max="32767" attributes="3"/>
-                  <Component id="btnLoad" alignment="1" pref="75" max="32767" attributes="1"/>
-                  <Component id="btnUp" alignment="1" pref="75" max="32767" attributes="1"/>
-                  <Component id="btnDown" alignment="1" pref="75" max="32767" attributes="1"/>
-                  <Component id="btnRemove" alignment="1" pref="75" max="32767" attributes="1"/>
-                  <Component id="btnFind" alignment="1" pref="75" max="32767" attributes="0"/>
-                  <Component id="btnEdit" alignment="1" pref="75" max="32767" attributes="1"/>
-                  <Component id="btnAdd" alignment="0" pref="75" max="32767" attributes="1"/>
-                  <Component id="btnSave" alignment="1" pref="75" max="32767" attributes="1"/>
-                  <Component id="btnLearn" alignment="1" pref="75" max="32767" attributes="1"/>
+                  <Component id="btnExecute" alignment="1" max="32767" attributes="3"/>
+                  <Component id="btnLoad" alignment="1" max="32767" attributes="1"/>
+                  <Component id="btnUp" alignment="1" max="32767" attributes="1"/>
+                  <Component id="btnDown" alignment="1" max="32767" attributes="1"/>
+                  <Component id="btnRemove" alignment="1" max="32767" attributes="1"/>
+                  <Component id="btnFind" alignment="1" max="32767" attributes="0"/>
+                  <Component id="btnEdit" alignment="1" max="32767" attributes="1"/>
+                  <Component id="btnAdd" alignment="0" max="32767" attributes="1"/>
+                  <Component id="btnSave" alignment="1" max="32767" attributes="1"/>
+                  <Component id="btnLearn" alignment="1" max="32767" attributes="1"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>

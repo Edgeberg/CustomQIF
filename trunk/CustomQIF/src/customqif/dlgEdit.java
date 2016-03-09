@@ -1,23 +1,22 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
+ * $Id: dlgEdit.java 29 2014-03-30 04:41:52Z eldon_r $
+ *
  * dlgEdit.java
  *
  * Created on 13/11/2011, 4:49:40 PM
+ *
+ * This dialog is for editing of both new and existing rules.
+ * If strTransactionLines is empty (note: null not handled) assumed existing.
+ * Otherwise, assumed edit of new rule, and editingRow value is ignored.
+ * Upon return (assuming it is called modally) blnCancelModalDialog will show
+ * whether or not the edit was OK'd (submitted) or canceled. (very cludgy, FIXME)
  */
 
 package customqif;
 
-import javax.swing.ComboBoxModel;
-import javax.swing.event.ListDataListener;
-import javax.swing.table.DefaultTableModel;
-
 /**
  *
- * @author Edgeberg <eldon_r@users.sf.net>
+ * @author Eldon
  */
 public class dlgEdit extends javax.swing.JDialog {
 
@@ -37,6 +36,7 @@ public class dlgEdit extends javax.swing.JDialog {
         initComponents();
         parent=parentForm;
         rowBeingEdited=editingRow;
+        parent.blnCancelModalDialog = true;
         if (strTransactionLines.isEmpty()) {
             jpTransaction.setVisible(false);
             setSize(getWidth(), getHeight() - jpTransaction.getHeight());
@@ -87,7 +87,7 @@ public class dlgEdit extends javax.swing.JDialog {
         setResizable(false);
 
         lblTransaction.setLabelFor(jspTransaction);
-        lblTransaction.setText("Transaction Details:");
+        lblTransaction.setText("Unmatched Record:");
 
         jtaTransaction.setColumns(20);
         jtaTransaction.setEditable(false);
@@ -261,6 +261,7 @@ public class dlgEdit extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        parent.blnCancelModalDialog = true;
         this.dispose();
     }//GEN-LAST:event_btnCancelActionPerformed
 
@@ -270,6 +271,7 @@ public class dlgEdit extends javax.swing.JDialog {
         } else {
             parent.replaceRow(rowBeingEdited, jtfNarration.getText(), jtfTransactionType.getText(), jtfAccount.getText());
         }
+        parent.blnCancelModalDialog = false;
         this.dispose();
     }//GEN-LAST:event_btnOKActionPerformed
 
