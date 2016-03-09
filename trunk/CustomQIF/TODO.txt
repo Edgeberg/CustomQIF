@@ -1,0 +1,7 @@
+1. Support more than just the extremely simplified QIF files that I get from my
+   bank.  See http://web.intuit.com/support/quicken/docs/d_qif.html.
+2. Use Load/Save to specified filenames for grid contents, and keep the last
+   used filename in the State file (maybe a recent file list too?).
+3. Make the columns user-definable on a file-by-file basis.  This will require
+   the file holding the grid contents to have a header row (or some other means
+   of indicating what the data rows that follow will consist of).
