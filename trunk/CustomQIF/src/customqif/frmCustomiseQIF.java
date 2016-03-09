@@ -1,5 +1,5 @@
 /*
- * $Id: frmCustomiseQIF.java 39 2014-10-26 13:28:01Z eldon_r $
+ * $Id: frmCustomiseQIF.java 40 2014-10-26 14:08:44Z eldon_r $
  *
  * Created on 20 March 2007, 01:09
  *
@@ -593,26 +593,26 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     public boolean matchTransaction(String strSearchDesc, String strTypeCode,
             String strNarration, String strType, String strDate, String strAmount, String strCheque,
             boolean blnCanErrorDlg) {
-        String strMatchDate;
-        String strMatchAmount;
-        String strMatchCheque;
+        String strMatchDate = ".*";
+        String strMatchAmount = ".*";
+        String strMatchCheque = ".*";
         boolean blnMatchesDate = true;    // These 3 refer to optional patterns, so start with
         boolean blnMatchesAmount = true;  // the assumption that this part matches
         boolean blnMatchesCheque = true;
         boolean blnMatch = false;
         strMatchError = "";
         if (strSearchDesc.contains("|")) {
-            strMatchDate = strSearchDesc.split("\\|", 8)[1];
-            strMatchAmount = strSearchDesc.concat("|").split("\\|",8)[2];
-            strMatchCheque = strSearchDesc.concat("||").split("\\|",8)[3];
-            if (!strMatchDate.equals("")) {
-                blnMatchesDate = strDate.matches(strMatchDate);
+            strMatchDate = strSearchDesc.concat("|||||").split("\\|", 8)[1];
+            strMatchAmount = strSearchDesc.concat("|||||").split("\\|",8)[2];
+            strMatchCheque = strSearchDesc.concat("|||||").split("\\|",8)[3];
+            if (!nvl(strMatchDate).equals("")) {
+                blnMatchesDate = nvl(strDate).matches(strMatchDate);
             }
-            if (!strMatchAmount.equals("")) {
-                blnMatchesAmount = strAmount.matches(strMatchAmount);
+            if (!nvl(strMatchAmount).equals("")) {
+                blnMatchesAmount = nvl(strAmount).matches(strMatchAmount);
             }
-            if (!strMatchCheque.equals("")) {
-                blnMatchesCheque = strCheque.matches(strMatchCheque);
+            if (!nvl(strMatchCheque).equals("")) {
+                blnMatchesCheque = nvl(strCheque).matches(strMatchCheque);
             }
         }
         try {
