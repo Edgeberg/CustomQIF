@@ -1,5 +1,5 @@
 /*
- * $Id: frmCustomiseQIF.java 26 2011-11-27 08:19:46Z eldon_r $
+ * $Id: frmCustomiseQIF.java 27 2011-11-27 08:24:52Z eldon_r $
  *
  * Created on 20 March 2007, 01:09
  *
@@ -17,7 +17,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import javax.swing.JOptionPane;
-import javax.swing.event.ListDataListener;
 import javax.swing.table.DefaultTableModel;
 // import javax.swing.table.TableModel;
 
@@ -1045,8 +1044,6 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     }
 
     public void replaceRow(int row, String narration, String xtype, String account) {
-        System.out.println("account="+account+",row="+Integer.toString(row));
-        System.out.println("narration="+narration+",type="+xtype);
         stringTable.setValueAt(narration, row, 0);
         stringTable.setValueAt(xtype, row, 1);
         stringTable.setValueAt(account, row, 2);
