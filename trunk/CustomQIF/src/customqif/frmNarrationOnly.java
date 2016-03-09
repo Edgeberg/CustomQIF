@@ -176,6 +176,7 @@ public class frmNarrationOnly extends javax.swing.JFrame {
         }
         strNOP = strNOP.trim();
         parent.strNarrationPatterns = strNOP;
+        parent.tabStrToArray();
         this.dispose();
     }//GEN-LAST:event_btnOKActionPerformed
 
