@@ -1,5 +1,5 @@
 /*
- * $Id: dlgEdit.java 32 2014-09-07 10:35:16Z eldon_r $
+ * $Id: dlgEdit.java 33 2014-09-07 16:03:36Z eldon_r $
  *
  * dlgEdit.java
  *
@@ -22,12 +22,19 @@ public class dlgEdit extends javax.swing.JDialog {
 
     frmCustomiseQIF parent;
     int rowBeingEdited = -1;
-    String strTransactionNarration = "";
+    String strTransactionNarrationToMatch = "";
+    String strTransactionTypeToMatch;
     boolean blnNewTransaction = false;
     
-    private void checkMatch(String strTxt, String strPattern) {
+    private void checkMatch(String strPattern, String strTypePattern, String strTxt, String strType, String strTransactionLines) {
         try {
-            if (strTxt.matches(strPattern)) {
+            if (parent.matchTransaction(
+                    strPattern,
+                    strTypePattern,
+                    strTxt,
+                    strType,
+                    strTransactionLines.concat("\n\n\n\n\n").split("\n")[2],
+                    strTransactionLines.concat("\n\n\n\n\n").split("\n")[3])) {
                 lblMatchIndicator.setText("Pattern currently matches this transaction");
             } else {
                 lblMatchIndicator.setText("Pattern does not currently match this transaction");
@@ -62,7 +69,8 @@ public class dlgEdit extends javax.swing.JDialog {
             blnNewTransaction = true;
         }
         jtfNarration.setText(java.util.regex.Matcher.quoteReplacement(strNarration)); // Escape the text for use as a regexp
-        strTransactionNarration=strNarration;
+        strTransactionNarrationToMatch=strNarration;
+        strTransactionTypeToMatch=strTransactionType;
         jtfTransactionType.setText(strTransactionType);
         jtfAccount.setText(strReplacement);
         jcbAccount.setModel(model);
@@ -70,7 +78,8 @@ public class dlgEdit extends javax.swing.JDialog {
             jcbAccount.setSelectedItem(strReplacement);
         }
         jtfAnnotation.setText(strAnnotation);
-        checkMatch(strNarration, jtfNarration.getText());
+        checkMatch(jtfNarration.getText(), strTransactionType, strTransactionNarrationToMatch, strTransactionTypeToMatch, strTransactionLines);
+        btnOK.getRootPane().setDefaultButton(btnOK);
     }
 
     /** This method is called from within the constructor to
@@ -330,7 +339,7 @@ public class dlgEdit extends javax.swing.JDialog {
     }//GEN-LAST:event_jcbAccountActionPerformed
 
     private void jtfNarrationKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtfNarrationKeyTyped
-        //checkMatch(strTransactionNarration, jtfNarration.getText());
+        //checkMatch(strTransactionNarrationToMatch, jtfNarration.getText());
     }//GEN-LAST:event_jtfNarrationKeyTyped
 
     private void jtfNarrationPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jtfNarrationPropertyChange
@@ -339,7 +348,7 @@ public class dlgEdit extends javax.swing.JDialog {
 
     private void lblMatchIndicatorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblMatchIndicatorMouseClicked
         // TODO add your handling code here:
-        checkMatch(strTransactionNarration, jtfNarration.getText());
+        checkMatch(jtfNarration.getText(), jtfTransactionType.getText(), strTransactionNarrationToMatch, strTransactionTypeToMatch, jtaTransaction.getText());
     }//GEN-LAST:event_lblMatchIndicatorMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

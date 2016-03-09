@@ -1,5 +1,5 @@
 /*
- * $Id: frmCustomiseQIF.java 32 2014-09-07 10:35:16Z eldon_r $
+ * $Id: frmCustomiseQIF.java 33 2014-09-07 16:03:36Z eldon_r $
  *
  * Created on 20 March 2007, 01:09
  *
@@ -44,6 +44,8 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     DefaultTableModel tableModelInProgress;
     boolean blnCancelModalDialog = false;
     Boolean blnReversedTransactions = false;
+    Boolean blnReformatDate = false;    // If we have sensed that we've got MM/DD/YYYY dates; we want YYYYMMDD.
+                                        // FIXME: This is a limited, inflexible check, and we currently only handle these 2 options.
 
     /** Creates new form frmCustomiseQIF */
     public frmCustomiseQIF() {
@@ -458,7 +460,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
         if (stringTable.getSelectedRowCount() > 0) {
             tableModel.insertRow(stringTable.getSelectedRow(), (Object[]) null);
-        } else tableModel.addRow(new Object[]{"", "", "", ""});
+        } else {
+            tableModel.addRow(new Object[]{"", "", "", ""});
+        }
         stringTable.setModel(tableModel);
     }//GEN-LAST:event_btnAddActionPerformed
 
@@ -497,16 +501,14 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
      * @param evt The event that caused the action to be performed
      */
     private void miSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveAsActionPerformed
-        frmLoadSave fls = null;
-        fls = new frmLoadSave(this, true, System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
+        frmLoadSave fls = new frmLoadSave(this, true, System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
         fls.setVisible(true);
     }//GEN-LAST:event_miSaveAsActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         if ((stringTable.getRowCount() > 1)
                 && (stringTable.getSelectedRowCount() == 1)) {
-            dlgEdit de = null;
-            de = new dlgEdit(this, true,
+            dlgEdit de = new dlgEdit(this, true,
                 "",
                 stringTable.getValueAt(stringTable.getSelectedRow(),0).toString(),
                 stringTable.getValueAt(stringTable.getSelectedRow(),1).toString(),
@@ -526,6 +528,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 new frmCustomiseQIF().setVisible(true);
             }
@@ -580,17 +583,47 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         }
     }
 
+    public boolean matchTransaction(String strSearchDesc, String strTypeCode, String strNarration, String strType, String strDate, String strAmount) {
+        String strMatchDate;
+        String strMatchAmount;
+        boolean blnMatchesDate = true;    // These two refer to optional patterns, so start with
+        boolean blnMatchesAmount = true;  // the assumption that this part matches
+        boolean blnMatch = false;
+        if (strSearchDesc.contains("|")) {
+            strMatchDate = strSearchDesc.split("\\|", 3)[1];
+            strMatchAmount = strSearchDesc.concat("|").split("\\|",3)[2];
+            if (!strMatchDate.equals("")) {
+                blnMatchesDate = strDate.matches(strMatchDate);
+            }
+            if (!strMatchAmount.equals("")) {
+                blnMatchesAmount = strAmount.matches(strMatchAmount);
+            }
+        }
+        try {
+            if (strNarration.matches(strSearchDesc)
+                && nvl(strType).matches(strTypeCode)
+                && blnMatchesDate
+                && blnMatchesAmount) {
+                blnMatch = true;
+                //JOptionPane.showMessageDialog(this, "'" + strLine + "' matches '" + strSearchDesc + "'", "Eureka!", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (java.util.regex.PatternSyntaxException pe1) {
+            JOptionPane.showMessageDialog(this, "'" + strSearchDesc + "' has an error in its pattern syntax.\n" + "Error is: '" + pe1.getDescription() + "'", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+        return blnMatch;
+    }
+    
     private void doTranslation(boolean learn) {
         boolean blnCancel = false;
-        boolean blnMatch = false;
+        boolean blnMatch;
         boolean blnMatchesDate = true;
         boolean blnMatchesAmount = true;
         String strLine = "";
         String strDesc = "";
-        String strSearchDesc = "";
-        String strTypeCode = "";
-        String strReplaceTypeWith = "";
-        String strInputFile = ctlInputFile.getText();
+        String strSearchDesc;
+        String strTypeCode;
+        String strReplaceTypeWith;
+        String strInputFile = ctlInputFile.getText();   // Throw away the first line, as we expect it to be a header that we don't read.
         String strMatchDate = "";
         String strMatchAmount = "";
 
@@ -599,7 +632,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             return;
         }
 
-        int i = 0;
+        int i;
         int e = 0;
         tableModelInProgress = (DefaultTableModel) stringTable.getModel();
         int rows = tableModelInProgress.getRowCount();
@@ -619,8 +652,6 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                     if (aryQIF[e][M] != null && aryKeep[e]) {
                         blnMatch = false;
                         for (i = 0; (!blnMatch) && (i < rows); i++) {
-                            blnMatchesDate = true;    // These two refer to optional patterns, so start with
-                            blnMatchesAmount = true;  // the assumption that this part matches
                             strSearchDesc = tableModelInProgress.getValueAt(i, 0).toString();
                             strSearchDesc = strSearchDesc.replaceAll("[(]", "\\[\\(\\]");
                             strSearchDesc = strSearchDesc.replaceAll("[)]", "\\[\\)\\]");
@@ -628,30 +659,13 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                             strTypeCode = strTypeCode.replaceAll("[(]", "\\[\\(\\]");
                             strTypeCode = strTypeCode.replaceAll("[)]", "\\[\\)\\]");
                             strReplaceTypeWith = tableModelInProgress.getValueAt(i, 2).toString();
-                            if (strSearchDesc.contains("|")) {
-                                strMatchDate = strSearchDesc.split("\\|", 3)[1];
-                                strMatchAmount = strSearchDesc.concat("|").split("\\|",3)[2];
-                                if (!strMatchDate.equals("")) {
-                                    blnMatchesDate = aryQIF[e][D].matches(strMatchDate);
+                            if (matchTransaction(strSearchDesc, strTypeCode, aryQIF[e][M], aryQIF[e][L], aryQIF[e][D], aryQIF[e][T])) {
+                                blnMatch = true;
+                                aryQIF[e][L] = strReplaceTypeWith;
+                                if (!tableModelInProgress.getValueAt(i, 3).toString().equals("")) {
+                                    aryQIF[e][M] = aryQIF[e][M].concat(" - ").concat(tableModelInProgress.getValueAt(i, 3).toString());
                                 }
-                                if (!strMatchAmount.equals("")) {
-                                    blnMatchesAmount = aryQIF[e][T].matches(strMatchAmount);
-                                }
-                            }
-                            try {
-                                if (aryQIF[e][M].matches(strSearchDesc)
-                                    && nvl(aryQIF[e][L]).matches(strTypeCode)
-                                    && blnMatchesDate
-                                    && blnMatchesAmount) {
-                                    blnMatch = true;
-                                    aryQIF[e][L] = strReplaceTypeWith;
-                                    if (!tableModelInProgress.getValueAt(i, 3).toString().equals("")) {
-                                        aryQIF[e][M] = aryQIF[e][M].concat(" - ").concat(tableModelInProgress.getValueAt(i, 3).toString());
-                                    }
-                                    //JOptionPane.showMessageDialog(this, "'" + strLine + "' matches '" + strSearchDesc + "'", "Eureka!", JOptionPane.INFORMATION_MESSAGE);
-                                }
-                            } catch (java.util.regex.PatternSyntaxException pe1) {
-                                JOptionPane.showMessageDialog(this, "'" + strSearchDesc + "' has an error in its pattern syntax.\n" + "Error is: '" + pe1.getDescription() + "'", "ERROR", JOptionPane.ERROR_MESSAGE);
+                                //JOptionPane.showMessageDialog(this, "'" + strLine + "' matches '" + strSearchDesc + "'", "Eureka!", JOptionPane.INFORMATION_MESSAGE);
                             }
                         }
                         if (!blnMatch) {
@@ -830,11 +844,11 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     }
 
     private void loadState() {
-        String strLine = "";
-        int intEqOffset = 0;
-        String strKey = "";
-        String strValue = "";
-        String aryGeom[] = {"","","",""};
+        String strLine;
+        int intEqOffset;
+        String strKey;
+        String strValue;
+        String aryGeom[];
 
         blnReversedTransactions = false; // default for when this value not set in State file
         
@@ -859,11 +873,23 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                             } else if (strKey.equals("patternfile")) {
                                 strPatternFile = strValue;
                             } else if (strKey.equals("geometry")) {
-                                aryGeom = strValue.split(",");
+                                aryGeom = strValue.concat(",,,").split(",");
                                 int intX = Integer.valueOf(aryGeom[0]);
+                                if (intX < 0) {
+                                    intX = this.getLocation().x;
+                                }
                                 int intY = Integer.valueOf(aryGeom[1]);
+                                if (intY < 0) {
+                                    intY = this.getLocation().y;
+                                }
                                 int intWidth = Integer.valueOf(aryGeom[2]);
+                                if (intWidth<10) {
+                                    intWidth=this.getSize().width;
+                                }
                                 int intHeight = Integer.valueOf(aryGeom[3]);
+                                if (intHeight<10) {
+                                    intHeight=this.getSize().height;
+                                }
                                 this.setLocation(intX, intY);
                                 this.setSize(intWidth, intHeight);
                             } else if (strKey.equals("narrationonlypatterns")) {
@@ -875,7 +901,6 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                             }
                         }
                         strLine = in.readLine();
-                        strValue = "";
                     }
                     in.close();
                 } catch (IOException ex) {
@@ -921,14 +946,14 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         return matchExists;
     }
 
-    @SuppressWarnings("UnusedAssignment")
     private String combineNarrations() {
-        String strLine;
+        String strLine, DD, MM, YYYY;
         File temp;
         intElements = 0;
         intElement = 0;
         intType = 0;
         strHeader = "";
+        boolean blnDateChecked = false;
         boolean blnDelimiterFound = false;
 
         try {
@@ -941,9 +966,16 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 
         try {
             BufferedReader in1 = new BufferedReader(new FileReader(ctlInputFile.getText()));
-            strLine = in1.readLine();
+            in1.readLine();
             while ((strLine = in1.readLine()) != null) {
                 // Handle ^ transaction delimiter either on separate line or at end of a line
+                if (strLine.matches("^D[0-9].*") && !blnDateChecked) {
+                    if (strLine.matches("^D[0-9]{8}$")) {
+                        blnReformatDate = false;
+                    } else if (strLine.matches("^D[0-9]{2}/[0-9]{2}/[0-9]{4}$")) {
+                        blnReformatDate = true;
+                    }
+                }
                 if (strLine.endsWith("^")) {
                     intElements++;
                 }
@@ -971,6 +1003,12 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                     intType = strTypes.indexOf(strLine.charAt(0));
                     if (intType >= 0) {
                         try {
+                            if (intType == D && blnReformatDate) {
+                                DD = strLine.substring(4,6);
+                                MM = strLine.substring(1,3);
+                                YYYY = strLine.substring(7,11);
+                                strLine = strLine.substring(0,1).concat(YYYY).concat(MM).concat(DD);
+                            }
                             aryQIF[intElement][intType] = strLine.substring(1);
                         } catch (ArrayIndexOutOfBoundsException ae) {
                             handleException(this, "Error while storing array element: " + ae.toString(), "combineNarrations function");
@@ -1105,9 +1143,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     }
     
     public void reverseItems() {
-        String strTemp = "";
-        boolean blnTemp = false;
-        int i = 0, j = aryQIF.length - 1, k = 0;
+        String strTemp;
+        boolean blnTemp;
+        int i = 0, j = aryQIF.length - 1, k;
         while (i < j) {
             for (k = 0; k < 5; k++) {
                 strTemp = aryQIF[i][k];
