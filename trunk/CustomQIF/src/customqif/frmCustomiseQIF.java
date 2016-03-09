@@ -1,5 +1,5 @@
 /*
- * $Id: frmCustomiseQIF.java 30 2014-03-30 10:11:30Z eldon_r $
+ * $Id: frmCustomiseQIF.java 31 2014-04-06 14:08:30Z eldon_r $
  *
  * Created on 20 March 2007, 01:09
  *
@@ -536,7 +536,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
      * @param strString
      * @return a String, which will be "" if strString is null, otherwise = strString
      */
-    private String nvl(String strString) {
+    public String nvl(String strString) {
         if (strString == null) {
             return "";
         } else {
@@ -637,19 +637,22 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                                     blnMatchesAmount = aryQIF[e][T].matches(strMatchAmount);
                                 }
                             }
-                            if (aryQIF[e][M].matches(strSearchDesc)
-                                && nvl(aryQIF[e][L]).matches(strTypeCode)
-                                && blnMatchesDate
-                                && blnMatchesAmount) {
-                                blnMatch = true;
-                                aryQIF[e][L] = strReplaceTypeWith;
-                                //JOptionPane.showMessageDialog(this, "'" + strLine + "' matches '" + strSearchDesc + "'", "Eureka!", JOptionPane.INFORMATION_MESSAGE);
+                            try {
+                                if (aryQIF[e][M].matches(strSearchDesc)
+                                    && nvl(aryQIF[e][L]).matches(strTypeCode)
+                                    && blnMatchesDate
+                                    && blnMatchesAmount) {
+                                    blnMatch = true;
+                                    aryQIF[e][L] = strReplaceTypeWith;
+                                    //JOptionPane.showMessageDialog(this, "'" + strLine + "' matches '" + strSearchDesc + "'", "Eureka!", JOptionPane.INFORMATION_MESSAGE);
+                                }
+                            } catch (java.util.regex.PatternSyntaxException pe1) {
+                                JOptionPane.showMessageDialog(this, "'" + strSearchDesc + "' has an error in its pattern syntax.\n" + "Error is: '" + pe1.getDescription() + "'", "ERROR", JOptionPane.ERROR_MESSAGE);
                             }
                         }
                         if (!blnMatch) {
                             if (learn) {
-                                dlgEdit de = null;
-                                de = new dlgEdit(this, true,
+                                dlgEdit de = new dlgEdit(this, true,
                                           nvl(aryQIF[e][M]) + nnvl(aryQIF[e][M], "\n")
                                         + nvl(aryQIF[e][L]) + nnvl(aryQIF[e][L], "\n")
                                         + nvl(aryQIF[e][D]) + nnvl(aryQIF[e][D], "\n")
@@ -668,7 +671,6 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                                     aryQIF[e][L] = tableModelInProgress.getValueAt(rows - 1, 2).toString();
                                 }
                             }
-                            blnMatch = false;
                         }
                     }
                     if (!learn && aryKeep[e]) {
@@ -901,7 +903,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 
     private boolean matchesArrayElement(String strToMatch, String aryToSearch[]) {
         int i = 0;
-        String strFromArray = "";
+        String strFromArray;
         boolean matchExists = false;
         while (!matchExists && i<aryToSearch.length) {
             strFromArray = aryToSearch[i].replaceAll("[(]", "\\[\\(\\]");
@@ -914,9 +916,10 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         return matchExists;
     }
 
+    @SuppressWarnings("UnusedAssignment")
     private String combineNarrations() {
-        String strLine = "";
-        File temp = null;
+        String strLine;
+        File temp;
         intElements = 0;
         intElement = 0;
         intType = 0;
