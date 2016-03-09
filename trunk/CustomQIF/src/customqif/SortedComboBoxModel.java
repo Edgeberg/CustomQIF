@@ -1,6 +1,8 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * $Id: SortedComboBoxModel.java 28 2014-03-30 04:38:16Z eldon_r $
+ *
+ * Code slightly adapted (with thanks) from:
+ * http://tips4java.wordpress.com/2008/11/11/sorted-combo-box-model/ by Rob Camick, November 11, 2008
  */
 
 package customqif;
