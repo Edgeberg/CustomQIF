@@ -1,5 +1,5 @@
 /*
- * $Id: dlgEdit.java 29 2014-03-30 04:41:52Z eldon_r $
+ * $Id: dlgEdit.java 30 2014-03-30 10:11:30Z eldon_r $
  *
  * dlgEdit.java
  *
@@ -102,10 +102,10 @@ public class dlgEdit extends javax.swing.JDialog {
                 .addGroup(jpTransactionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jpTransactionLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
-                        .addComponent(lblTransaction, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE))
+                        .addComponent(lblTransaction, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jpTransactionLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jspTransaction, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)))
+                        .addComponent(jspTransaction)))
                 .addContainerGap())
         );
         jpTransactionLayout.setVerticalGroup(
@@ -118,7 +118,8 @@ public class dlgEdit extends javax.swing.JDialog {
         );
 
         lblPattern.setLabelFor(jtfNarration);
-        lblPattern.setText("Pattern for matching the description / narration");
+        lblPattern.setText("Pattern for matching the description / narration*");
+        lblPattern.setToolTipText("Optionally, to also match on transaction date and/or amount, add these at the end of the narration pattern separated by a vertical bar (|) (i.e., in that order)");
 
         javax.swing.GroupLayout jpNarrationLayout = new javax.swing.GroupLayout(jpNarration);
         jpNarration.setLayout(jpNarrationLayout);
@@ -127,8 +128,8 @@ public class dlgEdit extends javax.swing.JDialog {
             .addGroup(jpNarrationLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpNarrationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblPattern, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
-                    .addComponent(jtfNarration, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE))
+                    .addComponent(lblPattern, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jtfNarration))
                 .addContainerGap())
         );
         jpNarrationLayout.setVerticalGroup(
@@ -149,7 +150,7 @@ public class dlgEdit extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jpTransactionTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblTransactionType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jtfTransactionType, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE))
+                    .addComponent(jtfTransactionType))
                 .addContainerGap())
         );
         jpTransactionTypeLayout.setVerticalGroup(
@@ -177,10 +178,10 @@ public class dlgEdit extends javax.swing.JDialog {
             .addGroup(jpReplacementAccountLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpReplacementAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jcbAccount, javax.swing.GroupLayout.Alignment.TRAILING, 0, 454, Short.MAX_VALUE)
-                    .addComponent(lblReplacementAccount, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
-                    .addComponent(lblNewAccount, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
-                    .addComponent(jtfAccount, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE))
+                    .addComponent(jcbAccount, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblReplacementAccount, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblNewAccount, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jtfAccount))
                 .addContainerGap())
         );
         jpReplacementAccountLayout.setVerticalGroup(
@@ -224,7 +225,7 @@ public class dlgEdit extends javax.swing.JDialog {
                 .addComponent(btnOK, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(63, 63, 63)
                 .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(105, Short.MAX_VALUE))
+                .addContainerGap())
             .addComponent(jpReplacementAccount, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jpEditLayout.setVerticalGroup(

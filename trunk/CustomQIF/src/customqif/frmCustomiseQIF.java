@@ -1,5 +1,5 @@
 /*
- * $Id: frmCustomiseQIF.java 29 2014-03-30 04:41:52Z eldon_r $
+ * $Id: frmCustomiseQIF.java 30 2014-03-30 10:11:30Z eldon_r $
  *
  * Created on 20 March 2007, 01:09
  *
@@ -582,12 +582,16 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     private void doTranslation(boolean learn) {
         boolean blnCancel = false;
         boolean blnMatch = false;
+        boolean blnMatchesDate = true;
+        boolean blnMatchesAmount = true;
         String strLine = "";
         String strDesc = "";
         String strSearchDesc = "";
         String strTypeCode = "";
         String strReplaceTypeWith = "";
         String strInputFile = ctlInputFile.getText();
+        String strMatchDate = "";
+        String strMatchAmount = "";
 
         strInputFile = combineNarrations();
         if (strInputFile == null) {
@@ -614,6 +618,8 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                     if (aryQIF[e][M] != null && aryKeep[e]) {
                         blnMatch = false;
                         for (i = 0; (!blnMatch) && (i < rows); i++) {
+                            blnMatchesDate = true;    // These two refer to optional patterns, so start with
+                            blnMatchesAmount = true;  // the assumption that this part matches
                             strSearchDesc = tableModelInProgress.getValueAt(i, 0).toString();
                             strSearchDesc = strSearchDesc.replaceAll("[(]", "\\[\\(\\]");
                             strSearchDesc = strSearchDesc.replaceAll("[)]", "\\[\\)\\]");
@@ -621,7 +627,20 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                             strTypeCode = strTypeCode.replaceAll("[(]", "\\[\\(\\]");
                             strTypeCode = strTypeCode.replaceAll("[)]", "\\[\\)\\]");
                             strReplaceTypeWith = tableModelInProgress.getValueAt(i, 2).toString();
-                            if (aryQIF[e][M].matches(strSearchDesc) && nvl(aryQIF[e][L]).matches(strTypeCode)) {
+                            if (strSearchDesc.contains("|")) {
+                                strMatchDate = strSearchDesc.split("\\|", 3)[1];
+                                strMatchAmount = strSearchDesc.concat("|").split("\\|",3)[2];
+                                if (!strMatchDate.equals("")) {
+                                    blnMatchesDate = aryQIF[e][D].matches(strMatchDate);
+                                }
+                                if (!strMatchAmount.equals("")) {
+                                    blnMatchesAmount = aryQIF[e][T].matches(strMatchAmount);
+                                }
+                            }
+                            if (aryQIF[e][M].matches(strSearchDesc)
+                                && nvl(aryQIF[e][L]).matches(strTypeCode)
+                                && blnMatchesDate
+                                && blnMatchesAmount) {
                                 blnMatch = true;
                                 aryQIF[e][L] = strReplaceTypeWith;
                                 //JOptionPane.showMessageDialog(this, "'" + strLine + "' matches '" + strSearchDesc + "'", "Eureka!", JOptionPane.INFORMATION_MESSAGE);
