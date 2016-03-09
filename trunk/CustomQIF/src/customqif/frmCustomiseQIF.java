@@ -1,5 +1,5 @@
 /*
- * $Id: frmCustomiseQIF.java 31 2014-04-06 14:08:30Z eldon_r $
+ * $Id: frmCustomiseQIF.java 32 2014-09-07 10:35:16Z eldon_r $
  *
  * Created on 20 March 2007, 01:09
  *
@@ -125,11 +125,11 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Description Pattern", "Transaction Type Pattern", "Transaction Type Replacement"
+                "Description Pattern", "Transaction Type Pattern", "Transaction Type Replacement", "Annotation"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -339,20 +339,20 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                             .add(btnInputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(ctlOutputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
-                            .add(ctlInputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(btnExecute, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(btnLoad, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(btnUp, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(btnDown, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(btnRemove, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(btnFind, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(btnEdit, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, btnAdd, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(btnSave, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(ctlOutputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 557, Short.MAX_VALUE)
+                            .add(ctlInputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 557, Short.MAX_VALUE)))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(btnExecute, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, btnLoad, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, btnSave, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, btnDown, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, btnUp, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, btnFind, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, btnRemove, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, btnEdit, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, btnAdd, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(btnLearn, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -458,7 +458,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
         if (stringTable.getSelectedRowCount() > 0) {
             tableModel.insertRow(stringTable.getSelectedRow(), (Object[]) null);
-        } else tableModel.addRow(new Object[]{"", "", ""});
+        } else tableModel.addRow(new Object[]{"", "", "", ""});
         stringTable.setModel(tableModel);
     }//GEN-LAST:event_btnAddActionPerformed
 
@@ -511,6 +511,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                 stringTable.getValueAt(stringTable.getSelectedRow(),0).toString(),
                 stringTable.getValueAt(stringTable.getSelectedRow(),1).toString(),
                 stringTable.getValueAt(stringTable.getSelectedRow(),2).toString(),
+                stringTable.getValueAt(stringTable.getSelectedRow(),3).toString(),
                 getAccountList(),
                 stringTable.getSelectedRow());
             de.setLocation(getX()+100,getY()+100);
@@ -644,6 +645,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                                     && blnMatchesAmount) {
                                     blnMatch = true;
                                     aryQIF[e][L] = strReplaceTypeWith;
+                                    if (!tableModelInProgress.getValueAt(i, 3).toString().equals("")) {
+                                        aryQIF[e][M] = aryQIF[e][M].concat(" - ").concat(tableModelInProgress.getValueAt(i, 3).toString());
+                                    }
                                     //JOptionPane.showMessageDialog(this, "'" + strLine + "' matches '" + strSearchDesc + "'", "Eureka!", JOptionPane.INFORMATION_MESSAGE);
                                 }
                             } catch (java.util.regex.PatternSyntaxException pe1) {
@@ -661,6 +665,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                                     aryQIF[e][M],
                                     aryQIF[e][L],
                                     aryQIF[e][L],
+                                    "",
                                     getAccountList(),
                                     -1);
                                 de.setLocation(getX()+jScrollPane1.getWidth()+22,getY()+btnLoad.getY()+mb.getHeight()+btnLoad.getHeight()+35);
@@ -729,8 +734,8 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                 try {
                     BufferedReader in = new BufferedReader(new FileReader(myStartupFile));
                     while ((strLine = in.readLine()) != null) {
-                        ary = strLine.split("\t", 3);
-                        tableModel.addRow(new Object[]{ary[0], ary[1], ary[2]});
+                        ary = strLine.concat("\t\t\t\t\t\t").split("\t", 5);    // Making sure we at least get 4 tab-delimited elements
+                        tableModel.addRow(new Object[]{ary[0], ary[1], ary[2], ary[3]});
                     }
                     in.close();
                     stringTable.setModel(tableModel);
@@ -1092,10 +1097,11 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         return itemList;
     }
 
-    public void replaceRow(int row, String narration, String xtype, String account) {
+    public void replaceRow(int row, String narration, String xtype, String account, String annotation) {
         stringTable.setValueAt(narration, row, 0);
         stringTable.setValueAt(xtype, row, 1);
         stringTable.setValueAt(account, row, 2);
+        stringTable.setValueAt(annotation, row, 3);
     }
     
     public void reverseItems() {

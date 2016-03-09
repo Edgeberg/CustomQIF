@@ -141,26 +141,26 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="ctlOutputFile" pref="488" max="32767" attributes="0"/>
-                          <Component id="ctlInputFile" alignment="0" pref="488" max="32767" attributes="0"/>
+                          <Component id="ctlOutputFile" pref="557" max="32767" attributes="0"/>
+                          <Component id="ctlInputFile" alignment="0" pref="557" max="32767" attributes="0"/>
                       </Group>
                   </Group>
-                  <Component id="jScrollPane1" alignment="1" pref="605" max="32767" attributes="2"/>
+                  <Component id="jScrollPane1" alignment="1" pref="674" max="32767" attributes="2"/>
+              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="btnExecute" pref="110" max="32767" attributes="3"/>
+                  <Component id="btnLoad" alignment="1" max="32767" attributes="1"/>
+                  <Component id="btnSave" alignment="1" max="32767" attributes="1"/>
+                  <Component id="btnDown" alignment="1" max="32767" attributes="1"/>
+                  <Component id="btnUp" alignment="1" max="32767" attributes="1"/>
+                  <Component id="btnFind" alignment="1" max="32767" attributes="0"/>
+                  <Component id="btnRemove" alignment="1" max="32767" attributes="1"/>
+                  <Component id="btnEdit" alignment="1" max="32767" attributes="1"/>
+                  <Component id="btnAdd" alignment="1" max="32767" attributes="1"/>
+                  <Component id="btnLearn" max="32767" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="btnExecute" alignment="1" max="32767" attributes="3"/>
-                  <Component id="btnLoad" alignment="1" max="32767" attributes="1"/>
-                  <Component id="btnUp" alignment="1" max="32767" attributes="1"/>
-                  <Component id="btnDown" alignment="1" max="32767" attributes="1"/>
-                  <Component id="btnRemove" alignment="1" max="32767" attributes="1"/>
-                  <Component id="btnFind" alignment="1" max="32767" attributes="0"/>
-                  <Component id="btnEdit" alignment="1" max="32767" attributes="1"/>
-                  <Component id="btnAdd" alignment="0" max="32767" attributes="1"/>
-                  <Component id="btnSave" alignment="1" max="32767" attributes="1"/>
-                  <Component id="btnLearn" alignment="1" max="32767" attributes="1"/>
-              </Group>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -225,10 +225,11 @@
         <Component class="javax.swing.JTable" name="stringTable">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="3" rowCount="0">
+              <Table columnCount="4" rowCount="0">
                 <Column editable="true" title="Description Pattern" type="java.lang.String"/>
                 <Column editable="true" title="Transaction Type Pattern" type="java.lang.String"/>
                 <Column editable="true" title="Transaction Type Replacement" type="java.lang.String"/>
+                <Column editable="true" title="Annotation" type="java.lang.String"/>
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
