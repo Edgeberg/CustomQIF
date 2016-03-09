@@ -1,5 +1,5 @@
 /*
- * $Id: dlgEdit.java 35 2014-09-28 15:12:55Z eldon_r $
+ * $Id: dlgEdit.java 36 2014-09-30 14:55:08Z eldon_r $
  *
  * dlgEdit.java
  *
@@ -14,6 +14,8 @@
 
 package customqif;
 
+import java.awt.Color;
+
 /**
  *
  * @author Edgeberg <eldon_r@users.sf.net>
@@ -26,8 +28,8 @@ public class dlgEdit extends javax.swing.JDialog {
     String strTransactionTypeToMatch;
     boolean blnNewTransaction = false;
     
-    private void checkMatch(String strPattern, String strTypePattern, String strTxt, String strType, String strTransactionLines) {
-        
+    private boolean checkMatch(String strPattern, String strTypePattern, String strTxt, String strType, String strTransactionLines) {
+        boolean blnMatches = false;
         String strTL = parent.nvl(strTransactionLines).concat(" \n \n \n \n \n ");
         String[] strTLA = strTL.split("\n");
         String strDate = strTLA[2].trim();
@@ -39,16 +41,23 @@ public class dlgEdit extends javax.swing.JDialog {
                     strTxt,
                     strType,
                     strDate,
-                    strAmount)) {
+                    strAmount,
+                    false)) {
                 lblMatchIndicator.setText("Pattern currently matches this transaction");
+                lblMatchIndicator.setBackground(Color.green);
+                blnMatches = true;
             } else {
                 lblMatchIndicator.setText("Pattern does not currently match this transaction");
+                lblMatchIndicator.setBackground(Color.orange);
+                blnMatches = false;
             }
             lblMatchIndicator.setToolTipText("Click here to re-check");
         } catch (java.util.regex.PatternSyntaxException pe1) {
             lblMatchIndicator.setText("Pattern has a syntax error");
+            lblMatchIndicator.setBackground(Color.red);
             lblMatchIndicator.setToolTipText("Error text: '" + pe1.getDescription() + "'");
         }
+        return blnMatches;
     }
 
     /** Creates new form dlgEdit */
@@ -73,7 +82,7 @@ public class dlgEdit extends javax.swing.JDialog {
             jtaTransaction.setText(strTransactionLines);
             blnNewTransaction = true;
         }
-        jtfNarration.setText(java.util.regex.Matcher.quoteReplacement(strNarration.replace("(", "\\(").replace(")", "\\)"))); // Escape the text for use as a regexp
+        jtfNarration.setText(java.util.regex.Matcher.quoteReplacement(strNarration.replace("(", "[(]").replace(")", "[)]").replace("*", "[*]"))); // Escape the text for use as a regexp
         strTransactionNarrationToMatch=strNarration;
         strTransactionTypeToMatch=strTransactionType;
         jtfTransactionType.setText(strTransactionType);
@@ -83,7 +92,11 @@ public class dlgEdit extends javax.swing.JDialog {
             jcbAccount.setSelectedItem(strReplacement);
         }
         jtfAnnotation.setText(strAnnotation);
-        checkMatch(jtfNarration.getText(), strTransactionType, strTransactionNarrationToMatch, strTransactionTypeToMatch, strTransactionLines);
+        if (blnNewTransaction) {
+            if (!checkMatch(jtfNarration.getText(), strTransactionType, strTransactionNarrationToMatch, strTransactionTypeToMatch, strTransactionLines)) {
+                btnOK.setEnabled(false);
+            }
+        }
         btnOK.getRootPane().setDefaultButton(btnOK);
     }
 
@@ -170,6 +183,11 @@ public class dlgEdit extends javax.swing.JDialog {
         lblPattern.setText("Pattern for matching the description / narration*");
         lblPattern.setToolTipText("Optionally, to also match on transaction date and/or amount, add these at the end of the narration pattern separated by a vertical bar (|) (i.e., in that order)");
 
+        jtfNarration.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jtfNarrationFocusLost(evt);
+            }
+        });
         jtfNarration.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 jtfNarrationPropertyChange(evt);
@@ -328,13 +346,19 @@ public class dlgEdit extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCancelActionPerformed
 
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
-        if (blnNewTransaction) {
-            parent.tableModelInProgress.addRow(new Object[]{jtfNarration.getText(), jtfTransactionType.getText(), jtfAccount.getText(), jtfAnnotation.getText()});
-        } else {
-            parent.replaceRow(rowBeingEdited, jtfNarration.getText(), jtfTransactionType.getText(), jtfAccount.getText(), jtfAnnotation.getText());
+        boolean blnCanClose = true;
+        if (!blnNewTransaction) {
+            
         }
-        parent.blnCancelModalDialog = false;
-        this.dispose();
+        if (blnCanClose) {
+            if (blnNewTransaction) {
+                parent.tableModelInProgress.addRow(new Object[]{jtfNarration.getText(), jtfTransactionType.getText(), jtfAccount.getText(), jtfAnnotation.getText()});
+            } else {
+                parent.replaceRow(rowBeingEdited, jtfNarration.getText(), jtfTransactionType.getText(), jtfAccount.getText(), jtfAnnotation.getText());
+            }
+            parent.blnCancelModalDialog = false;
+            this.dispose();
+        }
     }//GEN-LAST:event_btnOKActionPerformed
 
     private void jcbAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbAccountActionPerformed
@@ -353,8 +377,23 @@ public class dlgEdit extends javax.swing.JDialog {
 
     private void lblMatchIndicatorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblMatchIndicatorMouseClicked
         // TODO add your handling code here:
-        checkMatch(jtfNarration.getText(), jtfTransactionType.getText(), strTransactionNarrationToMatch, strTransactionTypeToMatch, jtaTransaction.getText());
+        if (checkMatch(jtfNarration.getText(), jtfTransactionType.getText(), strTransactionNarrationToMatch, strTransactionTypeToMatch, jtaTransaction.getText())) {
+            btnOK.setEnabled(true);
+        } else {
+            btnOK.setEnabled(false);
+        }
     }//GEN-LAST:event_lblMatchIndicatorMouseClicked
+
+    private void jtfNarrationFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jtfNarrationFocusLost
+        // TODO add your handling code here:
+        if (blnNewTransaction) {
+            if (checkMatch(jtfNarration.getText(), jtfTransactionType.getText(), strTransactionNarrationToMatch, strTransactionTypeToMatch, jtaTransaction.getText())) {
+                btnOK.setEnabled(true);
+            } else {
+                btnOK.setEnabled(false);
+            }
+        }
+    }//GEN-LAST:event_jtfNarrationFocusLost
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
