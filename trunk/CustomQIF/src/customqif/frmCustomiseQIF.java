@@ -1,5 +1,5 @@
 /*
- * $Id: frmCustomiseQIF.java 41 2014-11-09 02:15:13Z eldon_r $
+ * $Id: frmCustomiseQIF.java 42 2014-11-09 08:26:21Z eldon_r $
  *
  * Created on 20 March 2007, 01:09
  *
@@ -19,11 +19,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 import java.util.Properties;
 import javax.swing.JOptionPane;
-import javax.swing.RowSorter;
 import javax.swing.table.DefaultTableModel;
+import org.netbeans.swing.etable.ETableColumnModel;
 // import javax.swing.table.TableModel;
 
 /**
@@ -58,7 +57,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     /** Creates new form frmCustomiseQIF */
     public frmCustomiseQIF() {
         initComponents();
-
+        
         // Make the WindowListener our only way out of this app.:
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
@@ -86,7 +85,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         jpmTableContext = new javax.swing.JPopupMenu();
         jmiEdit = new javax.swing.JMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
-        stringTable = new javax.swing.JTable();
+        stringTable = new org.netbeans.swing.etable.ETable();
         btnAdd = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
         btnRemove = new javax.swing.JButton();
@@ -130,7 +129,6 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 
         jScrollPane1.setPreferredSize(new java.awt.Dimension(600, 402));
 
-        stringTable.setAutoCreateRowSorter(true);
         stringTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -155,10 +153,11 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             }
         });
         stringTable.setComponentPopupMenu(jpmTableContext);
+        stringTable.setPopupUsedFromTheCorner(true);
         jScrollPane1.setViewportView(stringTable);
-        stringTable.getColumnModel().getColumn(0).setMinWidth(20);
-        stringTable.getColumnModel().getColumn(0).setPreferredWidth(30);
-        stringTable.getColumnModel().getColumn(0).setMaxWidth(40);
+        stringTable.getColumnModel().getColumn(0).setMinWidth(35);
+        stringTable.getColumnModel().getColumn(0).setPreferredWidth(35);
+        stringTable.getColumnModel().getColumn(0).setMaxWidth(50);
         stringTable.getColumnModel().getColumn(1).setPreferredWidth(300);
         stringTable.getColumnModel().getColumn(4).setPreferredWidth(200);
 
@@ -362,9 +361,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                             .add(btnInputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(ctlInputFile)
+                            .add(ctlInputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 599, Short.MAX_VALUE)
                             .add(ctlOutputFile)))
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 716, Short.MAX_VALUE))
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
                     .add(btnExecute, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
@@ -385,7 +384,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
-                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                             .add(btnInputFile)
@@ -410,7 +409,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                         .add(btnSave, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(btnLoad, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 175, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 210, Short.MAX_VALUE)
                         .add(btnExecute, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(btnLearn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
@@ -447,7 +446,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLearnActionPerformed
 
     private void miOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miOpenActionPerformed
-        frmLoadSave fls = null;
+        frmLoadSave fls;
         fls = new frmLoadSave(this, false, System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
         fls.setVisible(true);
     }//GEN-LAST:event_miOpenActionPerformed
@@ -611,9 +610,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     public boolean matchTransaction(String strSearchDesc, String strTypeCode,
             String strNarration, String strType, String strDate, String strAmount, String strCheque,
             boolean blnCanErrorDlg) {
-        String strMatchDate = ".*";
-        String strMatchAmount = ".*";
-        String strMatchCheque = ".*";
+        String strMatchDate;
+        String strMatchAmount;
+        String strMatchCheque;
         boolean blnMatchesDate = true;    // These 3 refer to optional patterns, so start with
         boolean blnMatchesAmount = true;  // the assumption that this part matches
         boolean blnMatchesCheque = true;
@@ -663,7 +662,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         String strSearchDesc;
         String strTypeCode;
         String strReplaceTypeWith;
-        String strInputFile = ctlInputFile.getText();   // Throw away the first line, as we expect it to be a header that we don't read.
+        String strInputFile;
         String strMatchDate = "";
         String strMatchAmount = "";
 
@@ -805,6 +804,13 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 
     public void saveGrid() {
         int r, c, rows, columns;
+        
+        //Ensure no sorting or filtering is in place:
+        ETableColumnModel cm;
+        cm = (ETableColumnModel) stringTable.getColumnModel();
+        cm.clearSortedColumns();
+        stringTable.unsetQuickFilter();
+
         File myProgramDir = new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
         if (!myProgramDir.exists()) {
             myProgramDir.mkdirs();
@@ -1278,7 +1284,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     private javax.swing.JCheckBoxMenuItem miReversedTransactions;
     private javax.swing.JMenuItem miSave;
     private javax.swing.JMenuItem miSaveAs;
-    private javax.swing.JTable stringTable;
+    private org.netbeans.swing.etable.ETable stringTable;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }
