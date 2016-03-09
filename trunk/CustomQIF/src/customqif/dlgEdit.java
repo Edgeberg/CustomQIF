@@ -266,9 +266,9 @@ public class dlgEdit extends javax.swing.JDialog {
 
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
         if (blnNewTransaction) {
-            parent.replaceRow(rowBeingEdited, jtfNarration.getText(), jtfTransactionType.getText(), jtfAccount.getText());
-        } else {
             parent.tableModelInProgress.addRow(new Object[]{jtfNarration.getText(), jtfTransactionType.getText(), jtfAccount.getText()});
+        } else {
+            parent.replaceRow(rowBeingEdited, jtfNarration.getText(), jtfTransactionType.getText(), jtfAccount.getText());
         }
         this.dispose();
     }//GEN-LAST:event_btnOKActionPerformed
