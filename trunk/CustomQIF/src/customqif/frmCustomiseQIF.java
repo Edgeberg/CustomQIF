@@ -37,6 +37,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     int L = strTypes.indexOf('L');
     String aryQIF[][] = null;
     Boolean aryKeep[] = null;
+    String strNarrationPatterns = "";
 
     /** Creates new form frmCustomiseQIF */
     public frmCustomiseQIF() {
@@ -88,7 +89,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         miSave = new javax.swing.JMenuItem();
         miQuit = new javax.swing.JMenuItem();
         mOptions = new javax.swing.JMenu();
-        miOption1 = new javax.swing.JCheckBoxMenuItem();
+        miNarrationOnly = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Customise QIF files downloaded from the bank");
@@ -224,9 +225,14 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         mOptions.setMnemonic('O');
         mOptions.setText("Options");
 
-        miOption1.setSelected(true);
-        miOption1.setText("Reserved for Future Expansion");
-        mOptions.add(miOption1);
+        miNarrationOnly.setText("Narration Only transactions to avoid combining");
+        miNarrationOnly.setToolTipText("Configure a list of patterns that represent narrations that stand by themselves");
+        miNarrationOnly.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miNarrationOnlyActionPerformed(evt);
+            }
+        });
+        mOptions.add(miNarrationOnly);
 
         mb.add(mOptions);
 
@@ -339,9 +345,13 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 
     private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveActionPerformed
         if ((stringTable.getRowCount() > 1)
-                && (stringTable.getSelectedRow() >= 0)) {
+                && (stringTable.getSelectedRowCount() > 0)) {
             DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
-            tableModel.removeRow(stringTable.getSelectedRow());
+            for (int i=stringTable.getRowCount() + 1; i>0 ; i--) {
+                if (stringTable.isRowSelected(i)) {
+                    tableModel.removeRow(i);
+                }
+            }
             stringTable.setModel(tableModel);
         }
     }//GEN-LAST:event_btnRemoveActionPerformed
@@ -351,6 +361,10 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         tableModel.addRow(new Object[]{"", "", ""});
         stringTable.setModel(tableModel);
     }//GEN-LAST:event_btnAddActionPerformed
+
+    private void miNarrationOnlyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miNarrationOnlyActionPerformed
+        new frmNarrationOnly(this, strNarrationPatterns).setVisible(true);
+    }//GEN-LAST:event_miNarrationOnlyActionPerformed
 
     /**
      * @param args the command line arguments
@@ -598,9 +612,11 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             File myStateFile = new File(myProgramDir, "State");
             try {
                 BufferedWriter out = new BufferedWriter(new FileWriter(myStateFile));
-                out.write(ctlInputFile.getText());
+                out.write("InputFile = " + ctlInputFile.getText());
                 out.newLine();
-                out.write(ctlOutputFile.getText());
+                out.write("OutputFile = " + ctlOutputFile.getText());
+                out.newLine();
+                out.write("NarrationOnlyPatterns = " + strNarrationPatterns);
                 out.newLine();
                 out.close();
             } catch (IOException ex) {
@@ -612,7 +628,10 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     }
 
     private void loadState() {
-        String strLine;
+        String strLine = "";
+        int intEqOffset = 0;
+        String strKey = "";
+        String strValue = "";
 
         // First see if the .CustomQIF directory exists and create it if not
         File myProgramDir = new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
@@ -622,12 +641,22 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                 try {
                     BufferedReader in = new BufferedReader(new FileReader(myStateFile));
                     strLine = in.readLine();
-                    if (strLine != null) {
-                        ctlInputFile.setText(strLine);
-                    }
-                    strLine = in.readLine();
-                    if (strLine != null) {
-                        ctlOutputFile.setText(strLine);
+                    while (strLine != null) {
+                        strLine = strLine.trim();
+                        intEqOffset = strLine.indexOf('=');
+                        if (intEqOffset > 0 && intEqOffset < strLine.length()) {
+                            strKey = strLine.substring(0,intEqOffset).trim().toLowerCase();
+                            strValue = strLine.substring(intEqOffset + 1).trim();
+                            if (strKey.equals("inputfile")) {
+                                ctlInputFile.setText(strValue);
+                            } else if (strKey.equals("outputfile")) {
+                                ctlOutputFile.setText(strValue);
+                            } else if (strKey.equals("narrationonlypatterns")) {
+                                strNarrationPatterns = strValue;
+                            }
+                        }
+                        strLine = in.readLine();
+                        strValue = "";
                     }
                     in.close();
                 } catch (IOException ex) {
@@ -811,8 +840,8 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     private javax.swing.JMenu mFile;
     private javax.swing.JMenu mOptions;
     private javax.swing.JMenuBar mb;
+    private javax.swing.JMenuItem miNarrationOnly;
     private javax.swing.JMenuItem miOpen;
-    private javax.swing.JCheckBoxMenuItem miOption1;
     private javax.swing.JMenuItem miQuit;
     private javax.swing.JMenuItem miSave;
     private javax.swing.JTable stringTable;
