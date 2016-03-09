@@ -1,5 +1,5 @@
 /*
- * $Id: frmCustomiseQIF.java 35 2014-09-28 15:12:55Z eldon_r $
+ * $Id: frmCustomiseQIF.java 36 2014-09-30 14:55:08Z eldon_r $
  *
  * Created on 20 March 2007, 01:09
  *
@@ -46,6 +46,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     Boolean blnReversedTransactions = false;
     Boolean blnReformatDate = false;    // If we have sensed that we've got MM/DD/YYYY dates; we want YYYYMMDD.
                                         // FIXME: This is a limited, inflexible check, and we currently only handle these 2 options.
+    String strMatchError = "";
 
     /** Creates new form frmCustomiseQIF */
     public frmCustomiseQIF() {
@@ -583,12 +584,15 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         }
     }
 
-    public boolean matchTransaction(String strSearchDesc, String strTypeCode, String strNarration, String strType, String strDate, String strAmount) {
+    public boolean matchTransaction(String strSearchDesc, String strTypeCode,
+            String strNarration, String strType, String strDate, String strAmount,
+            boolean blnCanErrorDlg) {
         String strMatchDate;
         String strMatchAmount;
         boolean blnMatchesDate = true;    // These two refer to optional patterns, so start with
         boolean blnMatchesAmount = true;  // the assumption that this part matches
         boolean blnMatch = false;
+        strMatchError = "";
         if (strSearchDesc.contains("|")) {
             strMatchDate = strSearchDesc.split("\\|", 3)[1];
             strMatchAmount = strSearchDesc.concat("|").split("\\|",3)[2];
@@ -608,7 +612,12 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                 //JOptionPane.showMessageDialog(this, "'" + strLine + "' matches '" + strSearchDesc + "'", "Eureka!", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (java.util.regex.PatternSyntaxException pe1) {
-            JOptionPane.showMessageDialog(this, "'" + strSearchDesc + "' has an error in its pattern syntax.\n" + "Error is: '" + pe1.getDescription() + "'", "ERROR", JOptionPane.ERROR_MESSAGE);
+            strMatchError = pe1.getDescription();
+            if (blnCanErrorDlg) {
+                JOptionPane.showMessageDialog(this, "'" + strSearchDesc + "' has an error in its pattern syntax.\n" + "Error is: '" + pe1.getDescription() + "'", "ERROR", JOptionPane.ERROR_MESSAGE);
+            } else {
+                throw pe1;
+            }
         }
         return blnMatch;
     }
@@ -659,7 +668,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                             strTypeCode = strTypeCode.replaceAll("[(]", "\\[\\(\\]");
                             strTypeCode = strTypeCode.replaceAll("[)]", "\\[\\)\\]");
                             strReplaceTypeWith = tableModelInProgress.getValueAt(i, 2).toString();
-                            if (matchTransaction(strSearchDesc, strTypeCode, aryQIF[e][M], aryQIF[e][L], aryQIF[e][D], aryQIF[e][T])) {
+                            if (matchTransaction(strSearchDesc, strTypeCode, aryQIF[e][M], aryQIF[e][L], aryQIF[e][D], aryQIF[e][T], true)) {
                                 blnMatch = true;
                                 aryQIF[e][L] = strReplaceTypeWith;
                                 if (!tableModelInProgress.getValueAt(i, 3).toString().equals("")) {
