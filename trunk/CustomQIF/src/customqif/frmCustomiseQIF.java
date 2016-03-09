@@ -2,6 +2,7 @@
  * frmCustomiseQIF.java
  *
  * Created on 20 March 2007, 01:09
+ * $Id: frmCustomiseQIF.java 15 2009-12-15 09:54:52Z eldon_r $
  */
 package customqif;
 
@@ -833,16 +834,16 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                     if (aryQIF[intElement][L] == null) {
                         if (aryQIF[intElement][N] != null) {
                             aryQIF[intElement][L] = "CHECK";
-                        } else if (aryQIF[intElement][M].indexOf("DEPOSIT") > 0
+                        } else if (aryQIF[intElement][M].indexOf("DEPOSIT") >= 0
                                 && aryQIF[intElement][T].charAt(0) != '-') {
                             aryQIF[intElement][L] = "DEP";
-                        } else if (aryQIF[intElement][M].indexOf("PERIODIC PAY") > 0
+                        } else if (aryQIF[intElement][M].indexOf("PERIODIC PAY") >= 0
                                 && aryQIF[intElement][T].charAt(0) == '-') {
                             aryQIF[intElement][L] = "REPEATPMT";
-                        } else if (aryQIF[intElement][M].indexOf("T'FER") > 0
-                                || aryQIF[intElement][M].indexOf("TFR") > 0) {
+                        } else if (aryQIF[intElement][M].indexOf("T'FER") >= 0
+                                || aryQIF[intElement][M].indexOf("TFR") >= 0) {
                             aryQIF[intElement][L] = "XFER";
-                        } else if (aryQIF[intElement][M].indexOf("WITHDRAWAL") > 0) {
+                        } else if (aryQIF[intElement][M].indexOf("WITHDRAWAL") >= 0) {
                             aryQIF[intElement][L] = "DEBIT";
                         } else if (aryQIF[intElement][T].charAt(0) == '-') {
                             aryQIF[intElement][L] = "PAYMENT";
