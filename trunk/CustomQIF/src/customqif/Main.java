@@ -31,7 +31,7 @@ package customqif;
 
 /**
  *
- * @author Eldon Rosenberg <Eldon.Rosenberg@ozemail.com.au>
+ * @author Edgeberg <eldon_r@users.sf.net>
  */
 public class Main {
     
