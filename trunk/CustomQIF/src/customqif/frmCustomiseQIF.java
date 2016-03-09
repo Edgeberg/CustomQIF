@@ -38,6 +38,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     String aryQIF[][] = null;
     Boolean aryKeep[] = null;
     String strNarrationPatterns = "";
+    String aryNarrationPatterns[];
 
     /** Creates new form frmCustomiseQIF */
     public frmCustomiseQIF() {
@@ -404,6 +405,14 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(window, errorText, dialogTitle, JOptionPane.ERROR_MESSAGE);
     }
 
+    public void tabStrToArray () {
+        if (!strNarrationPatterns.trim().equals("")) {
+            aryNarrationPatterns = strNarrationPatterns.split("\t");
+        } else {
+            aryNarrationPatterns = null;
+        }
+    }
+
     private void doTranslation(boolean learn) {
         boolean blnCancel = false;
         boolean blnMatch = false;
@@ -653,6 +662,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                                 ctlOutputFile.setText(strValue);
                             } else if (strKey.equals("narrationonlypatterns")) {
                                 strNarrationPatterns = strValue;
+                                tabStrToArray();
                             }
                         }
                         strLine = in.readLine();
@@ -681,6 +691,21 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         if (dlg.getFile() != null) {
             ctlInputFile.setText(dlg.getDirectory() + dlg.getFile());
         }
+    }
+
+    private boolean matchesArrayElement(String strToMatch, String aryToSearch[]) {
+        int i = 0;
+        String strFromArray = "";
+        boolean matchExists = false;
+        while (!matchExists && i<aryToSearch.length) {
+            strFromArray = aryToSearch[i].replaceAll("[(]", "\\[\\(\\]");
+            strFromArray = strFromArray.replaceAll("[)]", "\\[\\)\\]");
+            if (strToMatch.matches("M" + strFromArray)) {
+                matchExists = true;
+            }
+            i++;
+        }
+        return matchExists;
     }
 
     private String combineNarrations() {
@@ -780,18 +805,18 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                                         blnLIdone = true;
                                     }
                                 }
-                            } else if (!aryQIF[i][T].equals("T0") && aryQIF[i + 1][T].equals("T0") && !aryQIF[i + 1][M].matches("MRATE ALTERED .*")) {
+                            } else if (!aryQIF[i][T].equals("T0") && aryQIF[i + 1][T].equals("T0") && !matchesArrayElement(aryQIF[i + 1][M], aryNarrationPatterns)) {
                                 aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + 1][M].substring(1);
                                 aryKeep[i + 1] = false;
                                 // Sometimes there will be additional narrations below
                                 if ((i + 2) < intElements) {
                                     // Only if same date as first extra narration
-                                    if (aryQIF[i + 2][D].equals(aryQIF[i + 1][D]) && aryQIF[i + 2][T].equals("T0") && !aryQIF[i + 2][M].matches("MRATE ALTERED .*")) {
+                                    if (aryQIF[i + 2][D].equals(aryQIF[i + 1][D]) && aryQIF[i + 2][T].equals("T0") && !matchesArrayElement(aryQIF[i + 2][M], aryNarrationPatterns)) {
                                         aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + 2][M].substring(1);
                                         aryKeep[i + 2] = false;
                                         if ((i + 3) < intElements) {
                                             // Only if same date as first extra narration
-                                            if (aryQIF[i + 3][D].equals(aryQIF[i + 1][D]) && aryQIF[i + 3][T].equals("T0") && !aryQIF[i + 3][M].matches("MRATE ALTERED .*")) {
+                                            if (aryQIF[i + 3][D].equals(aryQIF[i + 1][D]) && aryQIF[i + 3][T].equals("T0") && !matchesArrayElement(aryQIF[i + 3][M], aryNarrationPatterns)) {
                                                 aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + 3][M].substring(1);
                                                 aryKeep[i + 3] = false;
                                             }
