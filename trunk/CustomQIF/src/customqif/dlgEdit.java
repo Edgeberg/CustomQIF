@@ -1,5 +1,5 @@
 /*
- * $Id: dlgEdit.java 38 2014-10-26 12:18:57Z eldon_r $
+ * $Id: dlgEdit.java 45 2014-11-17 09:53:47Z eldon_r $
  *
  * dlgEdit.java
  *
@@ -408,7 +408,7 @@ public class dlgEdit extends javax.swing.JDialog {
         }
         if (blnCanClose) {
             if (blnNewTransaction) {
-                parent.tableModelInProgress.addRow(new Object[]{jtfNarration.getText(), jtfTransactionType.getText(), jtfAccount.getText(), jtfAnnotation.getText()});
+                parent.tableModelInProgress.addRow(new Object[]{parent.tableModelInProgress.getRowCount()+1, jtfNarration.getText(), jtfTransactionType.getText(), jtfAccount.getText(), jtfAnnotation.getText()});
             } else {
                 parent.replaceRow(rowBeingEdited, jtfNarration.getText(), jtfTransactionType.getText(), jtfAccount.getText(), jtfAnnotation.getText());
             }
