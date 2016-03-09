@@ -1,5 +1,5 @@
 /*
- * $Id: frmCustomiseQIF.java 42 2014-11-09 08:26:21Z eldon_r $
+ * $Id: frmCustomiseQIF.java 43 2014-11-09 09:26:22Z eldon_r $
  *
  * Created on 20 March 2007, 01:09
  *
@@ -691,18 +691,18 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                     if (aryQIF[e][M] != null && aryKeep[e]) {
                         blnMatch = false;
                         for (i = 0; (!blnMatch) && (i < rows); i++) {
-                            strSearchDesc = tableModelInProgress.getValueAt(i, 0).toString();
+                            strSearchDesc = tableModelInProgress.getValueAt(i, 1).toString();
                             strSearchDesc = strSearchDesc.replaceAll("[(]", "\\[\\(\\]");
                             strSearchDesc = strSearchDesc.replaceAll("[)]", "\\[\\)\\]");
-                            strTypeCode = tableModelInProgress.getValueAt(i, 1).toString();
+                            strTypeCode = tableModelInProgress.getValueAt(i, 2).toString();
                             strTypeCode = strTypeCode.replaceAll("[(]", "\\[\\(\\]");
                             strTypeCode = strTypeCode.replaceAll("[)]", "\\[\\)\\]");
-                            strReplaceTypeWith = tableModelInProgress.getValueAt(i, 2).toString();
+                            strReplaceTypeWith = tableModelInProgress.getValueAt(i, 3).toString();
                             if (matchTransaction(strSearchDesc, strTypeCode, aryQIF[e][M], aryQIF[e][L], aryQIF[e][D], aryQIF[e][T], aryQIF[e][N], true)) {
                                 blnMatch = true;
                                 aryQIF[e][L] = strReplaceTypeWith;
-                                if (!tableModelInProgress.getValueAt(i, 3).toString().equals("")) {
-                                    aryQIF[e][M] = aryQIF[e][M].concat(" - ").concat(tableModelInProgress.getValueAt(i, 3).toString());
+                                if (!tableModelInProgress.getValueAt(i, 4).toString().equals("")) {
+                                    aryQIF[e][M] = aryQIF[e][M].concat(" - ").concat(tableModelInProgress.getValueAt(i, 4).toString());
                                 }
                                 //JOptionPane.showMessageDialog(this, "'" + strLine + "' matches '" + strSearchDesc + "'", "Eureka!", JOptionPane.INFORMATION_MESSAGE);
                             }
@@ -726,7 +726,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                                 blnCancel = blnCancelModalDialog;
                                 if (!blnCancel) {
                                     rows++;
-                                    aryQIF[e][L] = tableModelInProgress.getValueAt(rows - 1, 2).toString();
+                                    aryQIF[e][L] = tableModelInProgress.getValueAt(rows - 1, 3).toString();
                                 }
                             }
                         }
