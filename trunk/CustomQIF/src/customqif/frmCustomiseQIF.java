@@ -1,5 +1,5 @@
 /*
- * $Id: frmCustomiseQIF.java 38 2014-10-26 12:18:57Z eldon_r $
+ * $Id: frmCustomiseQIF.java 39 2014-10-26 13:28:01Z eldon_r $
  *
  * Created on 20 March 2007, 01:09
  *
@@ -13,9 +13,14 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Properties;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 // import javax.swing.table.TableModel;
@@ -831,32 +836,41 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             myProgramDir.mkdirs();
         }
         if (myProgramDir.exists()) {
-            File myStateFile = new File(myProgramDir, "State");
+            Properties prop = new Properties();
+            OutputStream output = null;
             try {
-                BufferedWriter out = new BufferedWriter(new FileWriter(myStateFile));
-                out.write("InputFile_" + System.getProperty("os.name").replace(' ', '_') + " = " + ctlInputFile.getText());
-                out.newLine();
-                out.write("OutputFile_" + System.getProperty("os.name").replace(' ', '_') + " = " + ctlOutputFile.getText());
-                out.newLine();
-                out.write("NarrationOnlyPatterns = " + strNarrationPatterns);
-                out.newLine();
-                out.write("PatternFile = " + strPatternFile);
-                out.newLine();
+                FileInputStream input = new FileInputStream(myProgramDir.getAbsolutePath() + System.getProperty("file.separator") + "State");
+                prop.load(input); // Ensures properties not explicitly handled below are still saved back to the file
+            } catch (IOException ioei) {
+                // No problem
+            }
+            try {
+                output = new FileOutputStream(myProgramDir.getAbsolutePath() + System.getProperty("file.separator") + "State");
+                prop.setProperty("InputFile_" + System.getProperty("os.name").replace(' ', '_'), ctlInputFile.getText());
+                prop.setProperty("OutputFile_" + System.getProperty("os.name").replace(' ', '_'), ctlOutputFile.getText());
+                prop.setProperty("NarrationOnlyPatterns", strNarrationPatterns);
+                prop.setProperty("PatternFile", strPatternFile);
                 blnReversedTransactions = miReversedTransactions.getState();
-                out.write("ReversedTransactions = " + blnReversedTransactions.toString());
-                out.newLine();
-                out.write("Geometry = " +
+                prop.setProperty("ReversedTransactions", blnReversedTransactions.toString());
+                prop.setProperty("Geometry",
                         String.valueOf(this.getLocation().x) + "," +
                         String.valueOf(this.getLocation().y) + "," +
                         String.valueOf(this.getSize().width) + "," +
                         String.valueOf(this.getSize().height));
-                out.newLine();
-                out.close();
-            } catch (IOException ex) {
-                handleException(this, "Error while writing '" + myStateFile.getAbsolutePath() + "': " + ex.toString(), "miSaveActionPerformed subroutine");
+                prop.store(output, null);
+            } catch (IOException ioex) {
+                handleException(this, "Error while writing '" + output.toString() + "': " + ioex.toString(), "saveState subroutine");
+            } finally {
+                if (output != null) {
+                    try {
+                        output.close();
+                    } catch (IOException e) {
+                        handleException(this, "Error while closing '" + output.toString() + "': " + e.toString(), "saveState subroutine");
+                    }
+                }
             }
         } else {
-            handleException(this, "Unable to create directory '" + myProgramDir.getAbsolutePath() + "'", "miSaveActionPerformed subroutine");
+            handleException(this, "Unable to create directory '" + myProgramDir.getAbsolutePath() + "'", "saveState subroutine");
         }
     }
 
@@ -867,68 +881,66 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         String strValue;
         String aryGeom[];
 
-        blnReversedTransactions = false; // default for when this value not set in State file
-
+        // Set defaults for when values are not set in State file, or there is not yet a State file
+        blnReversedTransactions = false;
         ctlInputFile.setText(System.getProperty("user.home") + System.getProperty("file.separator") + "inputfile.qif");
         ctlOutputFile.setText(System.getProperty("user.home") + System.getProperty("file.separator") + "outputfile.qif");
 
         // First see if the .CustomQIF directory exists and create it if not
         File myProgramDir = new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
+        FileInputStream input = null;
         if (!myProgramDir.mkdirs()) {
             File myStateFile = new File(myProgramDir, "State");
             if (myStateFile.exists()) {
+                Properties prop = new Properties();
                 try {
-                    BufferedReader in = new BufferedReader(new FileReader(myStateFile));
-                    strLine = in.readLine();
-                    while (strLine != null) {
-                        strLine = strLine.trim();
-                        intEqOffset = strLine.indexOf('=');
-                        if (intEqOffset > 0 && intEqOffset < strLine.length()) {
-                            strKey = strLine.substring(0,intEqOffset).trim().toLowerCase();
-                            strValue = strLine.substring(intEqOffset + 1).trim();
-                            if (strKey.equals("inputfile_" + System.getProperty("os.name").toLowerCase().replace(' ', '_'))) {
-                                ctlInputFile.setText(strValue);
-                            } else if (strKey.equals("outputfile_" + System.getProperty("os.name").toLowerCase().replace(' ', '_'))) {
-                                ctlOutputFile.setText(strValue);
-                            } else if (strKey.equals("patternfile")) {
-                                strPatternFile = strValue;
-                            } else if (strKey.equals("geometry")) {
-                                aryGeom = strValue.concat(",,,").split(",");
-                                int intX = Integer.valueOf(aryGeom[0]);
-                                if (intX < 0) {
-                                    intX = this.getLocation().x;
-                                }
-                                int intY = Integer.valueOf(aryGeom[1]);
-                                if (intY < 0) {
-                                    intY = this.getLocation().y;
-                                }
-                                int intWidth = Integer.valueOf(aryGeom[2]);
-                                if (intWidth<10) {
-                                    intWidth=this.getSize().width;
-                                }
-                                int intHeight = Integer.valueOf(aryGeom[3]);
-                                if (intHeight<10) {
-                                    intHeight=this.getSize().height;
-                                }
-                                this.setLocation(intX, intY);
-                                this.setSize(intWidth, intHeight);
-                            } else if (strKey.equals("narrationonlypatterns")) {
-                                strNarrationPatterns = strValue;
-                                tabStrToArray();
-                            } else if (strKey.equals("reversedtransactions")) {
-                                blnReversedTransactions = strValue.equalsIgnoreCase("true");
-                                miReversedTransactions.setSelected(blnReversedTransactions);
-                            }
-                        }
-                        strLine = in.readLine();
+                    input = new FileInputStream(myProgramDir.getAbsolutePath() + System.getProperty("file.separator") + "State");
+                    prop.load(input);
+                } catch (IOException ioei) {
+                    // No problem
+                }
+                strKey = "InputFile_" + System.getProperty("os.name").replace(' ', '_');
+                strValue = prop.getProperty("InputFile_" + System.getProperty("os.name").replace(' ', '_'));
+                if (strValue != null) {
+                    ctlInputFile.setText(strValue);
+                }
+                strValue = prop.getProperty("OutputFile_" + System.getProperty("os.name").replace(' ', '_'));
+                if (strValue != null) {
+                    ctlOutputFile.setText(strValue);
+                }
+                strPatternFile = prop.getProperty("PatternFile");
+                strValue = prop.getProperty("Geometry");
+                aryGeom = strValue.concat(",,,").split(",");
+                int intX = Integer.valueOf(aryGeom[0]);
+                if (intX < 0) {
+                    intX = this.getLocation().x;
+                }
+                int intY = Integer.valueOf(aryGeom[1]);
+                if (intY < 0) {
+                    intY = this.getLocation().y;
+                }
+                int intWidth = Integer.valueOf(aryGeom[2]);
+                if (intWidth<10) {
+                    intWidth=this.getSize().width;
+                }
+                int intHeight = Integer.valueOf(aryGeom[3]);
+                if (intHeight<10) {
+                    intHeight=this.getSize().height;
+                }
+                this.setLocation(intX, intY);
+                this.setSize(intWidth, intHeight);
+                strNarrationPatterns = prop.getProperty("NarrationOnlyPatterns");
+                tabStrToArray();
+                blnReversedTransactions = prop.getProperty("ReversedTransactions").equals("true");
+                miReversedTransactions.setSelected(blnReversedTransactions);
+                if (input != null) {
+                    try {
+                        input.close();
+                    } catch (IOException ex) {
+                        handleException(this, "Error while closing '" + myStateFile.getAbsolutePath() + "': " + ex.toString(), "miOpenActionPerformed subroutine");
                     }
-                    in.close();
-                } catch (IOException ex) {
-                    handleException(this, "Error while reading '" + myStateFile.getAbsolutePath() + "': " + ex.toString(), "miOpenActionPerformed subroutine");
                 }
             }
-        } else {
-            // Set defaults, as there was no private application data folder?
         }
     }
 
