@@ -37,7 +37,7 @@ The idea of this project is to store text patterns and account names that these
 should pertain to, and process an input QIF file into a more usable QIF output
 file that can be then imported into packages such as GnuCash.
 
-At the time, in March 2007, I did what I considered was a faily thorough seach
+At the time, in March 2007, I did what I considered was a fairly thorough seach
 on the Internet to see if a utility of this general description already existed.
 I didn't find anything remotely like it, so, being eager to do another Netbeans
 Java project, I got started.
@@ -57,7 +57,7 @@ that?  I don't know!  Anyway, the project is called QifCon, and it uses xsl
 transforms for transformation rules.  As such it is apparently more flexible
 than CustomQIF and is also written in Java, and I would recommend anyone to give
 it a try, but it is currently command-line driven only, the user must write
-their own xsl files, it looks like xsl transforms don't allow for creating
+their own xsl files, and it looks like xsl transforms don't allow for creating
 elements in the output file while leaving the source element intact.  Overall
 my initial feeling is that the project aims are different enough for there to be
 a need for both.
