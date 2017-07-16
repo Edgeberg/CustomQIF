@@ -42,7 +42,7 @@ on the Internet to see if a utility of this general description already existed.
 I didn't find anything remotely like it, so, being eager to do another Netbeans
 Java project, I got started.
 
-This project is currently very much focussed on my own needs, as I make
+This project is currently very much focused on my own needs, as I make
 assumptions about the scope of the input file format.  In the file TODO.txt you
 will find a list of things I think I ought to do, including things that would
 broaden the appeal to people other than myself (or people in a very similar
