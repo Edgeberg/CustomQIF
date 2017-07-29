@@ -8,6 +8,10 @@ package customqif;
 
 import java.awt.Component;
 import java.awt.FileDialog;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
@@ -29,7 +33,7 @@ import org.netbeans.swing.etable.ETableColumnModel;
  *
  * @author  Edgeberg <eldon_r@users.sf.net>
  */
-public class frmCustomiseQIF extends javax.swing.JFrame {
+public final class frmCustomiseQIF extends javax.swing.JFrame {
 
     int intElements = 0;
     int intElement = 0;
@@ -155,11 +159,13 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         stringTable.setComponentPopupMenu(jpmTableContext);
         stringTable.setPopupUsedFromTheCorner(true);
         jScrollPane1.setViewportView(stringTable);
-        stringTable.getColumnModel().getColumn(0).setMinWidth(35);
-        stringTable.getColumnModel().getColumn(0).setPreferredWidth(35);
-        stringTable.getColumnModel().getColumn(0).setMaxWidth(50);
-        stringTable.getColumnModel().getColumn(1).setPreferredWidth(300);
-        stringTable.getColumnModel().getColumn(4).setPreferredWidth(200);
+        if (stringTable.getColumnModel().getColumnCount() > 0) {
+            stringTable.getColumnModel().getColumn(0).setMinWidth(35);
+            stringTable.getColumnModel().getColumn(0).setPreferredWidth(35);
+            stringTable.getColumnModel().getColumn(0).setMaxWidth(50);
+            stringTable.getColumnModel().getColumn(1).setPreferredWidth(300);
+            stringTable.getColumnModel().getColumn(4).setPreferredWidth(200);
+        }
 
         btnAdd.setMnemonic('A');
         btnAdd.setText("Add");
@@ -358,7 +364,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                     .add(layout.createSequentialGroup()
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
                             .add(btnOutputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(btnInputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE))
+                            .add(btnInputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(ctlInputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 599, Short.MAX_VALUE)
@@ -384,7 +390,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
-                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 504, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                             .add(btnInputFile)
@@ -540,7 +546,17 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                 stringTable.getValueAt(stringTable.getSelectedRow(),4).toString(),
                 getAccountList(),
                 stringTable.getSelectedRow());
-            de.setLocation(getX()+100,getY()+100);
+
+            // See if dlgEdit can fit on the screen at our preferred location
+            Rectangle rect = getThisScreen(this.getX(), this.getY());
+            if (rect != null) {
+                int xmax = rect.width + rect.x, ymax = rect.height + rect.y;
+                int x = getX() + 100, y = getY() + 100;
+                // If dlgEdit would overlap the screen edge in X or Y direction, adjust proposed position to prevent:
+                if (x + de.getWidth() > xmax) x = xmax - de.getWidth();
+                if (y + de.getHeight() > ymax) y = ymax - de.getHeight();
+                de.setLocation(x, y);
+            }
             de.setVisible(true);
         }
     }//GEN-LAST:event_btnEditActionPerformed
@@ -665,6 +681,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
         String strInputFile;
         String strMatchDate = "";
         String strMatchAmount = "";
+        Rectangle rect = null;
 
         strInputFile = combineNarrations();
         if (strInputFile == null) {
@@ -721,7 +738,16 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                                     "",
                                     getAccountList(),
                                     -1);
-                                de.setLocation(getX()+jScrollPane1.getWidth()+22,getY()+btnLoad.getY()+mb.getHeight()+btnLoad.getHeight()+35);
+                                // See if dlgEdit can fit on the screen at our preferred location
+                                rect = getThisScreen(this.getX(), this.getY());
+                                if (rect != null) {
+                                    int xmax = rect.width + rect.x, ymax = rect.height + rect.y;
+                                    int x = getX() + jScrollPane1.getWidth() + 22, y = getY() + btnLoad.getY() + mb.getHeight() + btnLoad.getHeight() + 35;
+                                    // If dlgEdit would overlap the screen edge in X or Y direction, adjust proposed position to prevent:
+                                    if (x + de.getWidth() > xmax) x = xmax - de.getWidth();
+                                    if (y + de.getHeight() > ymax) y = ymax - de.getHeight();
+                                    de.setLocation(x, y);
+                                }
                                 de.setVisible(true);
                                 blnCancel = blnCancelModalDialog;
                                 if (!blnCancel) {
@@ -853,7 +879,7 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
     private void doTheCloseThing() {
         int selection = JOptionPane.showConfirmDialog(
                 null,
-                "Are you sure you want to quit?", "CustomiseQIF",
+                "Are you sure you want to quit without saving the patterns?", "CustomiseQIF",
                 JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.WARNING_MESSAGE);
         if (selection == JOptionPane.YES_OPTION) {
@@ -862,7 +888,9 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
 //            keys.clear();
 //            RowSorter.SortKey sk = new RowSorter(0, "ASCENDING");
 //            keys.add(RowSorter.SortKey [0, "ASCENDING"]));
-            saveGrid();
+
+            // auto save grid
+//            saveGrid();
             saveState();
             dispose();      // Closes the frame
             System.exit(0); // Terminates the application
@@ -1187,21 +1215,25 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
                                 // Sometimes there will be additional narrations below
                                 if ((i + 2) < intElements) {
                                     // Only if same date as first extra narration
-                                    if (aryQIF[i + 2][D].equals(aryQIF[i + 1][D]) && aryQIF[i + 2][T].equals("0") && !matchesArrayElement(aryQIF[i + 2][M], aryNarrationPatterns)) {
-                                        aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + 2][M];
-                                        aryKeep[i + 2] = false;
-                                        if ((i + 3) < intElements) {
-                                            // Only if same date as first extra narration
-                                            if (aryQIF[i + 3][D].equals(aryQIF[i + 1][D]) && aryQIF[i + 3][T].equals("0") && !matchesArrayElement(aryQIF[i + 3][M], aryNarrationPatterns)) {
-                                                aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + 3][M];
-                                                aryKeep[i + 3] = false;
+                                    try {
+                                        if (aryQIF[i + 2][D].equals(aryQIF[i + 1][D]) && aryQIF[i + 2][T].equals("0") && !matchesArrayElement(aryQIF[i + 2][M], aryNarrationPatterns)) {
+                                            aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + 2][M];
+                                            aryKeep[i + 2] = false;
+                                            if ((i + 3) < intElements) {
+                                                // Only if same date as first extra narration
+                                                if (aryQIF[i + 3][D].equals(aryQIF[i + 1][D]) && aryQIF[i + 3][T].equals("0") && !matchesArrayElement(aryQIF[i + 3][M], aryNarrationPatterns)) {
+                                                    aryQIF[i][M] = aryQIF[i][M] + " / " + aryQIF[i + 3][M];
+                                                    aryKeep[i + 3] = false;
+                                                }
                                             }
                                         }
+                                    } catch (NullPointerException npe) {
+                                        handleException(this, "Error while examining adjacent rows", "combineNarrations Function");
                                     }
                                 }
                             }
                         }
-                        for (int j = 0; j < 5; j++) {
+                        for (int j = 0; j < strTypes.length(); j++) {
                             if (aryQIF[i][j] != null) {
                                 out.write(strTypes.charAt(j) + aryQIF[i][j] + "\n");
                             }
@@ -1260,6 +1292,25 @@ public class frmCustomiseQIF extends javax.swing.JFrame {
             i++;
             j--;
         }
+    }
+    
+    public Rectangle getThisScreen(int thisX, int thisY) {
+        Rectangle rect;
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[] gs = ge.getScreenDevices();
+        for (int s = 0; s < gs.length; s++) {   // Each screen
+            GraphicsDevice gd = gs[s];
+            GraphicsConfiguration[] gc = gd.getConfigurations();
+            for (int i=0; i < gc.length; i++) {
+                rect = gs[s].getDefaultConfiguration().getBounds();
+                if (rect.x <= thisX && thisX < (rect.x + rect.width)
+                        && rect.y <= thisY && thisY < (rect.y + rect.height)) {
+                    return rect;
+                }
+            }
+        }
+        handleException(this, "Can't find where on the display our window is!", "Window Positioning Error");
+        return (Rectangle) null;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
