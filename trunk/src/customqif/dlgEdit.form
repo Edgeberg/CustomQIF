@@ -4,10 +4,10 @@
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
     <Property name="title" type="java.lang.String" value="Rule Editor"/>
-    <Property name="resizable" type="boolean" value="false"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -24,7 +24,7 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jpEdit" alignment="0" max="32767" attributes="0"/>
+          <Component id="jpEdit" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -39,35 +39,25 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="jpTransaction" alignment="0" max="32767" attributes="0"/>
+              <Component id="jpType" alignment="0" max="32767" attributes="0"/>
+              <Component id="jpOtherFields" alignment="0" max="32767" attributes="0"/>
               <Component id="jpNarration" alignment="0" max="32767" attributes="0"/>
-              <Component id="jpTransactionType" alignment="1" max="32767" attributes="0"/>
+              <Component id="jpTransaction" alignment="0" max="32767" attributes="0"/>
               <Component id="jpReplacementAccount" alignment="0" max="32767" attributes="0"/>
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace max="32767" attributes="0"/>
-                  <Component id="btnOK" min="-2" pref="100" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
-                  <Component id="btnCancel" min="-2" pref="106" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="183" max="-2" attributes="0"/>
-              </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Component id="jpTransaction" min="-2" max="-2" attributes="1"/>
+                  <Component id="jpTransaction" max="32767" attributes="1"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jpNarration" min="-2" max="-2" attributes="0"/>
+                  <Component id="jpNarration" min="-2" pref="46" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jpTransactionType" min="-2" max="-2" attributes="0"/>
+                  <Component id="jpOtherFields" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jpReplacementAccount" min="-2" pref="174" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="32767" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="btnOK" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="btnCancel" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="jpType" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jpReplacementAccount" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -81,7 +71,7 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jspTransaction" pref="634" max="32767" attributes="0"/>
+                          <Component id="jspTransaction" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
                               <Component id="lblTransaction" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
@@ -101,7 +91,7 @@
                           <Component id="lblMatchIndicator" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jspTransaction" pref="95" max="32767" attributes="1"/>
+                      <Component id="jspTransaction" pref="90" max="32767" attributes="1"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -124,6 +114,9 @@
                     <Property name="editable" type="boolean" value="false"/>
                     <Property name="columns" type="int" value="20"/>
                     <Property name="rows" type="int" value="5"/>
+                    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[0, 300]"/>
+                    </Property>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -154,7 +147,7 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jtfNarration" pref="634" max="32767" attributes="0"/>
+                          <Component id="jtfNarration" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
                               <Component id="lblPattern" min="-2" pref="360" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -174,6 +167,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jtfNarration" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -185,7 +179,7 @@
                   <ComponentRef name="jtfNarration"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Pattern for matching the description / narration*"/>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Optionally, to also match on transaction date and/or amount and/or cheque number, add your&lt;br /&gt;&#xa;match text at the end of the narration pattern separated by vertical bar (|) (i.e., in that order).&lt;br /&gt;&#xa;Leave any of these optional text fields empty if you don&apos;t want to match on them; they will be ignored."/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;To also match on transaction date and/or amount and/or cheque number,&lt;br /&gt;&#xa;check the &lt;b&gt;Also &lt;u&gt;m&lt;/u&gt;atch other fields&lt;/b&gt; option.&lt;br /&gt;&#xa;Leave any of these optional text fields empty if you don&apos;t want to match &lt;br /&gt;on them; they will be ignored."/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="jtfNarration">
@@ -200,43 +194,77 @@
                 <Property name="text" type="java.lang.String" value="Also match other fields"/>
               </Properties>
               <Events>
+                <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jtfNarrationFocusLost"/>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbMatchOtherActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JPanel" name="jpTransactionType">
+        <Container class="javax.swing.JPanel" name="jpOtherFields">
 
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="lblTransactionType" pref="634" max="32767" attributes="0"/>
-                          <Component id="jtfTransactionType" alignment="0" max="32767" attributes="0"/>
-                      </Group>
+                      <Component id="lblDate" min="-2" pref="47" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jtfDate" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="lblAmount" min="-2" pref="54" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jtfAmount" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="lblCheque" min="-2" pref="68" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jtfCheque" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="lblTransactionType" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jtfTransactionType" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jtfDate" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="lblDate" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="lblAmount" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jtfAmount" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="lblCheque" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jtfCheque" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="lblTransactionType">
+            <Component class="javax.swing.JLabel" name="lblDate">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Pattern for matching the transaction type (usually leave as default)"/>
+                <Property name="text" type="java.lang.String" value="Date"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="jtfTransactionType">
+            <Component class="javax.swing.JTextField" name="jtfDate">
+              <Events>
+                <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jtfNarrationFocusLost"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lblAmount">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Amount"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="jtfAmount">
+              <Events>
+                <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jtfNarrationFocusLost"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lblCheque">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Cheque #"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="jtfCheque">
+              <Events>
+                <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jtfNarrationFocusLost"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -245,11 +273,11 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jcbAccount" alignment="1" max="32767" attributes="0"/>
-                          <Component id="lblReplacementAccount" alignment="1" pref="634" max="32767" attributes="0"/>
+                          <Component id="lblReplacementAccount" alignment="1" max="32767" attributes="0"/>
                           <Component id="lblNewAccount" alignment="0" max="32767" attributes="0"/>
                           <Component id="jtfAccount" alignment="0" max="32767" attributes="0"/>
                           <Component id="lblAnnotation" max="32767" attributes="0"/>
@@ -257,6 +285,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
+                  <Component id="jPanel1" alignment="1" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -269,10 +298,12 @@
                       <Component id="lblNewAccount" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jtfAccount" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="lblAnnotation" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jtfAnnotation" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -303,26 +334,91 @@
                 <Property name="text" type="java.lang.String" value="Annotation to add to the narration (e.g. description of the goods)"/>
               </Properties>
             </Component>
+            <Container class="javax.swing.JPanel" name="jPanel1">
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="btnOK" min="-2" pref="100" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="btnCancel" min="-2" pref="106" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="btnOK" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnCancel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Component class="javax.swing.JButton" name="btnOK">
+                  <Properties>
+                    <Property name="mnemonic" type="int" value="79"/>
+                    <Property name="text" type="java.lang.String" value="OK"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnOKActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="btnCancel">
+                  <Properties>
+                    <Property name="mnemonic" type="int" value="67"/>
+                    <Property name="text" type="java.lang.String" value="Cancel"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCancelActionPerformed"/>
+                  </Events>
+                </Component>
+              </SubComponents>
+            </Container>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JButton" name="btnOK">
-          <Properties>
-            <Property name="mnemonic" type="int" value="79"/>
-            <Property name="text" type="java.lang.String" value="OK"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnOKActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="btnCancel">
-          <Properties>
-            <Property name="mnemonic" type="int" value="67"/>
-            <Property name="text" type="java.lang.String" value="Cancel"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCancelActionPerformed"/>
-          </Events>
-        </Component>
+        <Container class="javax.swing.JPanel" name="jpType">
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jtfTransactionType" max="32767" attributes="0"/>
+                          <Component id="lblTransactionType" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      <Component id="lblTransactionType" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jtfTransactionType" min="-2" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JTextField" name="jtfTransactionType">
+              <Events>
+                <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jtfNarrationFocusLost"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lblTransactionType">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Pattern for matching the transaction type (usually leave as default)"/>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
       </SubComponents>
     </Container>
   </SubComponents>

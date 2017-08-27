@@ -35,6 +35,8 @@ import org.netbeans.swing.etable.ETableColumnModel;
  */
 public final class frmCustomiseQIF extends javax.swing.JFrame {
 
+    double appVersion;
+    int intGridColumns;      
     int intElements = 0;
     int intElement = 0;
     int intType = 0;
@@ -45,6 +47,16 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
     int M = strTypes.indexOf('M');
     int N = strTypes.indexOf('N');
     int L = strTypes.indexOf('L');
+    // Columns in their internally represented order
+    int colRow = 0;
+    int colNarration = 1;
+    int colXDate = 2;
+    int colXAmount = 3;
+    int colCheque = 4;
+    int colXType = 5;
+    int colAccount = 6;
+    int colAnnotation = 7;
+    
     String aryQIF[][] = null;
     Boolean aryKeep[] = null;
     String strNarrationPatterns = "";
@@ -56,10 +68,14 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
     Boolean blnReformatDate = false;    // If we have sensed that we've got MM/DD/YYYY dates; we want YYYYMMDD.
     Boolean blnDDMM = false;            // If the above is true AND we've found an obvious DD/MM/YYYY formatted date in the file.
                                         // FIXME: This is a limited, inflexible check, and we currently only handle these 3 options.
-    String strMatchError = "";
-
+    String strMatchErrorStr = "";   // Name of field that has a match (regular expression) error
+    int intMatchErrorLine = -1;      // Line (starting at 0) within pattern list of matching error
+    java.util.regex.PatternSyntaxException lastPE = null; // Pattern match error details
+    
     /** Creates new form frmCustomiseQIF */
     public frmCustomiseQIF() {
+        this.appVersion = 0.91;
+        this.intGridColumns = 6;        // Just a default; we'll get it from the grid later
         initComponents();
         
         // Make the WindowListener our only way out of this app.:
@@ -84,46 +100,41 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         jpmTableContext = new javax.swing.JPopupMenu();
         jmiEdit = new javax.swing.JMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
         stringTable = new org.netbeans.swing.etable.ETable();
-        btnAdd = new javax.swing.JButton();
-        btnEdit = new javax.swing.JButton();
-        btnRemove = new javax.swing.JButton();
-        btnUp = new javax.swing.JButton();
-        btnDown = new javax.swing.JButton();
-        btnSave = new javax.swing.JButton();
-        btnLoad = new javax.swing.JButton();
         btnExecute = new javax.swing.JButton();
         btnLearn = new javax.swing.JButton();
         btnInputFile = new javax.swing.JButton();
         ctlInputFile = new javax.swing.JTextField();
         btnOutputFile = new javax.swing.JButton();
         ctlOutputFile = new javax.swing.JTextField();
-        btnFind = new javax.swing.JButton();
         mb = new javax.swing.JMenuBar();
         mFile = new javax.swing.JMenu();
         miOpen = new javax.swing.JMenuItem();
         miSave = new javax.swing.JMenuItem();
         miSaveAs = new javax.swing.JMenuItem();
         miQuit = new javax.swing.JMenuItem();
+        mEdit = new javax.swing.JMenu();
+        miAdd = new javax.swing.JMenuItem();
+        miRemove = new javax.swing.JMenuItem();
+        miEdit = new javax.swing.JMenuItem();
+        miUp = new javax.swing.JMenuItem();
+        miDown = new javax.swing.JMenuItem();
         mOptions = new javax.swing.JMenu();
         miNarrationOnly = new javax.swing.JMenuItem();
         miReversedTransactions = new javax.swing.JCheckBoxMenuItem();
 
         jpmTableContext.setInvoker(stringTable);
 
-        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, btnEdit, org.jdesktop.beansbinding.ELProperty.create("${action}"), jmiEdit, org.jdesktop.beansbinding.BeanProperty.create("action"));
-        bindingGroup.addBinding(binding);
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, btnEdit, org.jdesktop.beansbinding.ELProperty.create("${label}"), jmiEdit, org.jdesktop.beansbinding.BeanProperty.create("label"));
-        bindingGroup.addBinding(binding);
-
+        jmiEdit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        jmiEdit.setMnemonic('E');
+        jmiEdit.setText("Edit");
         jmiEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEditActionPerformed(evt);
+                miEditActionPerformed(evt);
             }
         });
         jpmTableContext.add(jmiEdit);
@@ -138,14 +149,14 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
 
             },
             new String [] {
-                "#", "Description Pattern", "Transaction Type Pattern", "Transaction Type Replacement", "Annotation"
+                "#", "Narration", "Date", "Amount", "ChequeNum", "Transaction Type Pattern", "Transaction Type Replacement", "Annotation"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, true, true, true
+                false, true, true, true, true, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -164,86 +175,8 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
             stringTable.getColumnModel().getColumn(0).setPreferredWidth(35);
             stringTable.getColumnModel().getColumn(0).setMaxWidth(50);
             stringTable.getColumnModel().getColumn(1).setPreferredWidth(300);
-            stringTable.getColumnModel().getColumn(4).setPreferredWidth(200);
+            stringTable.getColumnModel().getColumn(7).setPreferredWidth(200);
         }
-
-        btnAdd.setMnemonic('A');
-        btnAdd.setText("Add");
-        btnAdd.setMaximumSize(new java.awt.Dimension(75, 29));
-        btnAdd.setMinimumSize(new java.awt.Dimension(75, 29));
-        btnAdd.setPreferredSize(new java.awt.Dimension(75, 29));
-        btnAdd.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddActionPerformed(evt);
-            }
-        });
-
-        btnEdit.setMnemonic('E');
-        btnEdit.setText("Edit");
-        btnEdit.setMaximumSize(new java.awt.Dimension(75, 29));
-        btnEdit.setMinimumSize(new java.awt.Dimension(75, 29));
-        btnEdit.setPreferredSize(new java.awt.Dimension(75, 29));
-        btnEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEditActionPerformed(evt);
-            }
-        });
-
-        btnRemove.setMnemonic('R');
-        btnRemove.setText("Remove");
-        btnRemove.setMaximumSize(new java.awt.Dimension(75, 29));
-        btnRemove.setMinimumSize(new java.awt.Dimension(75, 29));
-        btnRemove.setPreferredSize(new java.awt.Dimension(75, 29));
-        btnRemove.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRemoveActionPerformed(evt);
-            }
-        });
-
-        btnUp.setMnemonic('U');
-        btnUp.setText("Up");
-        btnUp.setMaximumSize(new java.awt.Dimension(75, 29));
-        btnUp.setMinimumSize(new java.awt.Dimension(75, 29));
-        btnUp.setPreferredSize(new java.awt.Dimension(75, 29));
-        btnUp.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnUpActionPerformed(evt);
-            }
-        });
-
-        btnDown.setMnemonic('D');
-        btnDown.setText("Down");
-        btnDown.setMaximumSize(new java.awt.Dimension(75, 29));
-        btnDown.setMinimumSize(new java.awt.Dimension(75, 29));
-        btnDown.setPreferredSize(new java.awt.Dimension(75, 29));
-        btnDown.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDownActionPerformed(evt);
-            }
-        });
-
-        btnSave.setMnemonic('S');
-        btnSave.setText("Save");
-        btnSave.setToolTipText("Save this setup");
-        btnSave.setMaximumSize(new java.awt.Dimension(75, 29));
-        btnSave.setMinimumSize(new java.awt.Dimension(75, 29));
-        btnSave.setPreferredSize(new java.awt.Dimension(75, 29));
-        btnSave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miSaveActionPerformed(evt);
-            }
-        });
-
-        btnLoad.setMnemonic('L');
-        btnLoad.setText("Load");
-        btnLoad.setMaximumSize(new java.awt.Dimension(75, 29));
-        btnLoad.setMinimumSize(new java.awt.Dimension(75, 29));
-        btnLoad.setPreferredSize(new java.awt.Dimension(75, 29));
-        btnLoad.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miOpenActionPerformed(evt);
-            }
-        });
 
         btnExecute.setMnemonic('x');
         btnExecute.setText("Execute");
@@ -284,13 +217,6 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
             }
         });
 
-        btnFind.setMnemonic('R');
-        btnFind.setText("Find");
-        btnFind.setDisplayedMnemonicIndex(0);
-        btnFind.setMaximumSize(new java.awt.Dimension(75, 29));
-        btnFind.setMinimumSize(new java.awt.Dimension(75, 29));
-        btnFind.setPreferredSize(new java.awt.Dimension(75, 29));
-
         mFile.setMnemonic('F');
         mFile.setText("File");
 
@@ -314,6 +240,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         });
         mFile.add(miSave);
 
+        miSaveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         miSaveAs.setMnemonic('A');
         miSaveAs.setText("Save As...");
         miSaveAs.addActionListener(new java.awt.event.ActionListener() {
@@ -334,6 +261,62 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         mFile.add(miQuit);
 
         mb.add(mFile);
+
+        mEdit.setMnemonic('E');
+        mEdit.setText("Edit");
+        mEdit.setToolTipText("");
+
+        miAdd.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_INSERT, 0));
+        miAdd.setMnemonic('A');
+        miAdd.setText("Add");
+        miAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miAddActionPerformed(evt);
+            }
+        });
+        mEdit.add(miAdd);
+
+        miRemove.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
+        miRemove.setMnemonic('R');
+        miRemove.setText("Remove");
+        miRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miRemoveActionPerformed(evt);
+            }
+        });
+        mEdit.add(miRemove);
+
+        miEdit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        miEdit.setMnemonic('E');
+        miEdit.setText("Edit");
+        miEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miEditActionPerformed(evt);
+            }
+        });
+        mEdit.add(miEdit);
+
+        miUp.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        miUp.setMnemonic('U');
+        miUp.setText("Move Up");
+        miUp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miUpActionPerformed(evt);
+            }
+        });
+        mEdit.add(miUp);
+
+        miDown.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DOWN, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        miDown.setMnemonic('D');
+        miDown.setText("Move Down");
+        miDown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miDownActionPerformed(evt);
+            }
+        });
+        mEdit.add(miDown);
+
+        mb.add(mEdit);
 
         mOptions.setMnemonic('O');
         mOptions.setText("Options");
@@ -361,80 +344,41 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 731, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
                             .add(btnOutputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(btnInputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(ctlInputFile, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 599, Short.MAX_VALUE)
-                            .add(ctlOutputFile)))
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(btnExecute, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, btnLearn, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, btnAdd, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, btnEdit, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, btnRemove, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, btnFind, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, btnUp, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, btnDown, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, btnSave, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, btnLoad, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .add(ctlInputFile)
+                            .add(ctlOutputFile))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, btnExecute, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, btnLearn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 504, Short.MAX_VALUE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(btnInputFile)
-                            .add(ctlInputFile, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(btnOutputFile)
-                            .add(ctlOutputFile, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                    .add(layout.createSequentialGroup()
-                        .add(btnAdd, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(btnEdit, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(btnRemove, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(6, 6, 6)
-                        .add(btnFind, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(18, 18, 18)
-                        .add(btnUp, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(btnDown, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(18, 18, 18)
-                        .add(btnSave, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(btnLoad, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 210, Short.MAX_VALUE)
-                        .add(btnExecute, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(btnLearn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(btnInputFile)
+                    .add(ctlInputFile, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(btnExecute, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(btnOutputFile)
+                    .add(ctlOutputFile, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(btnLearn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
-        btnAdd.getAccessibleContext().setAccessibleDescription("Add a row");
-        btnEdit.getAccessibleContext().setAccessibleDescription("Edit selected row");
-        btnRemove.getAccessibleContext().setAccessibleDescription("Remove rows");
-        btnUp.getAccessibleContext().setAccessibleDescription("Move selected rows up");
-        btnDown.getAccessibleContext().setAccessibleDescription("Move selected rows down");
-        btnSave.getAccessibleContext().setAccessibleDescription("Save grid data");
-        btnLoad.getAccessibleContext().setAccessibleDescription("Load grid data");
-        btnFind.getAccessibleContext().setAccessibleDescription("Find");
-
         getAccessibleContext().setAccessibleName("Customise QIF");
         getAccessibleContext().setAccessibleDescription("Customise QIF files downloaded from the bank");
-
-        bindingGroup.bind();
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -469,7 +413,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         doTheCloseThing();
     }//GEN-LAST:event_miQuitActionPerformed
 
-    private void btnRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveActionPerformed
+    private void miRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miRemoveActionPerformed
         if ((stringTable.getRowCount() > 1)
                 && (stringTable.getSelectedRowCount() > 0)) {
             DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
@@ -481,24 +425,22 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
             stringTable.setModel(tableModel);
             numberGrid();
         }
-    }//GEN-LAST:event_btnRemoveActionPerformed
-
-    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
-        if (stringTable.getSelectedRowCount() > 0) {
-            tableModel.insertRow(stringTable.getSelectedRow(), (Object[]) null);
-        } else {
-            tableModel.addRow(new Object[]{0, "", "", "", ""});
-        }
-        stringTable.setModel(tableModel);
-        numberGrid();
-    }//GEN-LAST:event_btnAddActionPerformed
+    }//GEN-LAST:event_miRemoveActionPerformed
 
     private void miNarrationOnlyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miNarrationOnlyActionPerformed
         new frmNarrationOnly(this, strNarrationPatterns).setVisible(true);
     }//GEN-LAST:event_miNarrationOnlyActionPerformed
 
-    private void btnUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpActionPerformed
+    /**
+     * Event handler for the "File \ Save As" menu item
+     * @param evt The event that caused the action to be performed
+     */
+    private void miSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveAsActionPerformed
+        frmLoadSave fls = new frmLoadSave(this, true, System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
+        fls.setVisible(true);
+    }//GEN-LAST:event_miSaveAsActionPerformed
+
+    private void miUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miUpActionPerformed
         if (stringTable.getSelectedRowCount() > 0 && ! stringTable.isRowSelected(0)) {
             DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
             for (int i=1 ; i<stringTable.getRowCount() ; i++) {
@@ -510,9 +452,9 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
             stringTable.changeSelection(stringTable.getSelectedRow() - 1, stringTable.getSelectedColumn(), false, false);
             numberGrid();
         }
-    }//GEN-LAST:event_btnUpActionPerformed
+    }//GEN-LAST:event_miUpActionPerformed
 
-    private void btnDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDownActionPerformed
+    private void miDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDownActionPerformed
         if (stringTable.getSelectedRowCount() > 0 && ! stringTable.isRowSelected(stringTable.getRowCount() - 1)) {
             DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
             for (int i=stringTable.getRowCount() - 2 ; i>0 ; i--) {
@@ -524,26 +466,20 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
             stringTable.changeSelection(stringTable.getSelectedRow() + 1, stringTable.getSelectedColumn(), false, false);
             numberGrid();
         }
-    }//GEN-LAST:event_btnDownActionPerformed
+    }//GEN-LAST:event_miDownActionPerformed
 
-    /**
-     * Event handler for the "File \ Save As" menu item
-     * @param evt The event that caused the action to be performed
-     */
-    private void miSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveAsActionPerformed
-        frmLoadSave fls = new frmLoadSave(this, true, System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
-        fls.setVisible(true);
-    }//GEN-LAST:event_miSaveAsActionPerformed
-
-    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+    private void miEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miEditActionPerformed
         if ((stringTable.getRowCount() > 1)
                 && (stringTable.getSelectedRowCount() == 1)) {
             dlgEdit de = new dlgEdit(this, true,
                 "",
-                stringTable.getValueAt(stringTable.getSelectedRow(),1).toString(),
-                stringTable.getValueAt(stringTable.getSelectedRow(),2).toString(),
-                stringTable.getValueAt(stringTable.getSelectedRow(),3).toString(),
-                stringTable.getValueAt(stringTable.getSelectedRow(),4).toString(),
+                stringTable.getValueAt(stringTable.getSelectedRow(),colNarration).toString(),
+                stringTable.getValueAt(stringTable.getSelectedRow(),colXDate).toString(),
+                stringTable.getValueAt(stringTable.getSelectedRow(),colXAmount).toString(),
+                stringTable.getValueAt(stringTable.getSelectedRow(),colCheque).toString(),
+                stringTable.getValueAt(stringTable.getSelectedRow(),colXType).toString(),
+                stringTable.getValueAt(stringTable.getSelectedRow(),colAccount).toString(),
+                stringTable.getValueAt(stringTable.getSelectedRow(),colAnnotation).toString(),
                 getAccountList(),
                 stringTable.getSelectedRow());
 
@@ -559,7 +495,18 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
             }
             de.setVisible(true);
         }
-    }//GEN-LAST:event_btnEditActionPerformed
+    }//GEN-LAST:event_miEditActionPerformed
+
+    private void miAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddActionPerformed
+        DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
+        if (stringTable.getSelectedRowCount() > 0) {
+            tableModel.insertRow(stringTable.getSelectedRow(), (Object[]) null);
+        } else {
+            tableModel.addRow((Object[]) null);
+        }
+        stringTable.setModel(tableModel);
+        numberGrid();
+    }//GEN-LAST:event_miAddActionPerformed
 
     /**
      * The main member, which receives initial program control
@@ -623,65 +570,52 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         }
     }
 
-    public boolean matchTransaction(String strSearchDesc, String strTypeCode,
-            String strNarration, String strType, String strDate, String strAmount, String strCheque,
-            boolean blnCanErrorDlg) {
-        String strMatchDate;
-        String strMatchAmount;
-        String strMatchCheque;
-        boolean blnMatchesDate = true;    // These 3 refer to optional patterns, so start with
-        boolean blnMatchesAmount = true;  // the assumption that this part matches
-        boolean blnMatchesCheque = true;
-        boolean blnMatch = false;
-        strMatchError = "";
-        if (strSearchDesc.contains("|")) {
-            strMatchDate = strSearchDesc.concat("|||||").split("\\|", 8)[1];
-            strMatchAmount = strSearchDesc.concat("|||||").split("\\|",8)[2];
-            strMatchCheque = strSearchDesc.concat("|||||").split("\\|",8)[3];
-            if (!nvl(strMatchDate).equals("")) {
-                blnMatchesDate = nvl(strDate).matches(strMatchDate);
-            }
-            if (!nvl(strMatchAmount).equals("")) {
-                blnMatchesAmount = nvl(strAmount).matches(strMatchAmount);
-            }
-            if (!nvl(strMatchCheque).equals("")) {
-                blnMatchesCheque = nvl(strCheque).matches(strMatchCheque);
+    public boolean safeMatchString(String strString, String strPattern, String strStringName, int intPatternListLine, boolean blnCanErrorDlg) {
+        boolean res = false;
+        try {
+            res = nvl(strString).matches(strPattern);
+        } catch (java.util.regex.PatternSyntaxException pe) {
+            if (blnCanErrorDlg) {
+                // We're allowed to tell the user immediately
+                JOptionPane.showMessageDialog(this, strStringName + " ('" + strPattern + "') has an error in its pattern syntax.\n" + "Error is: '" + pe.getDescription() + "'", "ERROR", JOptionPane.ERROR_MESSAGE);
+            } else {
+                // Just remember for later
+                lastPE = pe;
+                intMatchErrorLine = ++intPatternListLine;
+                strMatchErrorStr = strStringName;
             }
         }
-        try {
-            if (strNarration.matches(strSearchDesc)
-                && nvl(strType).matches(strTypeCode)
+        return res;
+    }
+    
+    public boolean matchTransaction(String strSearchDesc, String strSearchDate, String strSearchAmount, String strSearchCheque, String strTypeCode,
+            String strNarration, String strType, String strDate, String strAmount, String strCheque,
+            int intPatternListLine,
+            boolean blnCanErrorDlg) {
+        boolean blnMatchesNarration = safeMatchString(strNarration, strSearchDesc, "Narration", intPatternListLine, blnCanErrorDlg);
+        boolean blnMatchesDate = (strSearchDate.isEmpty() || safeMatchString(strDate, strSearchDate, "Date", intPatternListLine, blnCanErrorDlg));
+        boolean blnMatchesAmount = (strSearchAmount.isEmpty() || safeMatchString(strAmount, strSearchAmount, "Amount", intPatternListLine, blnCanErrorDlg));
+        boolean blnMatchesCheque = (strSearchCheque.isEmpty() || safeMatchString(strCheque, strSearchCheque, "Cheque", intPatternListLine, blnCanErrorDlg));
+        boolean blnMatchesType = (strTypeCode.isEmpty() || safeMatchString(strType, strTypeCode, "Type", intPatternListLine, blnCanErrorDlg));
+        boolean blnMatch = blnMatchesNarration
                 && blnMatchesDate
                 && blnMatchesAmount
-                && blnMatchesCheque) {
-                blnMatch = true;
-                //JOptionPane.showMessageDialog(this, "'" + strLine + "' matches '" + strSearchDesc + "'", "Eureka!", JOptionPane.INFORMATION_MESSAGE);
-            }
-        } catch (java.util.regex.PatternSyntaxException pe1) {
-            strMatchError = pe1.getDescription();
-            if (blnCanErrorDlg) {
-                JOptionPane.showMessageDialog(this, "'" + strSearchDesc + "' has an error in its pattern syntax.\n" + "Error is: '" + pe1.getDescription() + "'", "ERROR", JOptionPane.ERROR_MESSAGE);
-            } else {
-                throw pe1;
-            }
-        }
+                && blnMatchesCheque
+                && blnMatchesType;
         return blnMatch;
     }
     
     private void doTranslation(boolean learn) {
         boolean blnCancel = false;
         boolean blnMatch;
-        boolean blnMatchesDate = true;
-        boolean blnMatchesAmount = true;
-        String strLine = "";
-        String strDesc = "";
         String strSearchDesc;
+        String strSearchDate;
+        String strSearchCheque;
+        String strSearchAmount;
         String strTypeCode;
         String strReplaceTypeWith;
         String strInputFile;
-        String strMatchDate = "";
-        String strMatchAmount = "";
-        Rectangle rect = null;
+        Rectangle rect;
 
         strInputFile = combineNarrations();
         if (strInputFile == null) {
@@ -692,6 +626,9 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         int e = 0;
         tableModelInProgress = (DefaultTableModel) stringTable.getModel();
         int rows = tableModelInProgress.getRowCount();
+
+        lastPE = null;
+        intMatchErrorLine = -1;
 
         //status1.setText("Processing...");
         BufferedWriter out = null;
@@ -708,18 +645,17 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
                     if (aryQIF[e][M] != null && aryKeep[e]) {
                         blnMatch = false;
                         for (i = 0; (!blnMatch) && (i < rows); i++) {
-                            strSearchDesc = tableModelInProgress.getValueAt(i, 1).toString();
-                            strSearchDesc = strSearchDesc.replaceAll("[(]", "\\[\\(\\]");
-                            strSearchDesc = strSearchDesc.replaceAll("[)]", "\\[\\)\\]");
-                            strTypeCode = tableModelInProgress.getValueAt(i, 2).toString();
-                            strTypeCode = strTypeCode.replaceAll("[(]", "\\[\\(\\]");
-                            strTypeCode = strTypeCode.replaceAll("[)]", "\\[\\)\\]");
-                            strReplaceTypeWith = tableModelInProgress.getValueAt(i, 3).toString();
-                            if (matchTransaction(strSearchDesc, strTypeCode, aryQIF[e][M], aryQIF[e][L], aryQIF[e][D], aryQIF[e][T], aryQIF[e][N], true)) {
+                            strSearchDesc = tableModelInProgress.getValueAt(i, colNarration).toString();
+                            strSearchDate = tableModelInProgress.getValueAt(i, colXDate).toString();
+                            strSearchAmount = tableModelInProgress.getValueAt(i, colXAmount).toString();
+                            strSearchCheque = tableModelInProgress.getValueAt(i, colCheque).toString();
+                            strTypeCode = tableModelInProgress.getValueAt(i, colXType).toString();
+                            strReplaceTypeWith = tableModelInProgress.getValueAt(i, colAccount).toString();
+                            if (matchTransaction(strSearchDesc, strSearchDate, strSearchAmount, strSearchCheque, strTypeCode, aryQIF[e][M], aryQIF[e][L], aryQIF[e][D], aryQIF[e][T], aryQIF[e][N], i, false)) {
                                 blnMatch = true;
                                 aryQIF[e][L] = strReplaceTypeWith;
-                                if (!tableModelInProgress.getValueAt(i, 4).toString().equals("")) {
-                                    aryQIF[e][M] = aryQIF[e][M].concat(" - ").concat(tableModelInProgress.getValueAt(i, 4).toString());
+                                if (!tableModelInProgress.getValueAt(i, colAnnotation).toString().equals("")) {
+                                    aryQIF[e][M] = aryQIF[e][M].concat(" - ").concat(tableModelInProgress.getValueAt(i, colAnnotation).toString());
                                 }
                                 //JOptionPane.showMessageDialog(this, "'" + strLine + "' matches '" + strSearchDesc + "'", "Eureka!", JOptionPane.INFORMATION_MESSAGE);
                             }
@@ -733,6 +669,9 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
                                         + nvl(aryQIF[e][T]) + nnvl(aryQIF[e][T], "\n")
                                         + nvl(aryQIF[e][N]) + nnvl(aryQIF[e][N], ""),
                                     aryQIF[e][M],
+                                    "",
+                                    "",
+                                    "",
                                     aryQIF[e][L],
                                     aryQIF[e][L],
                                     "",
@@ -742,7 +681,8 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
                                 rect = getThisScreen(this.getX(), this.getY());
                                 if (rect != null) {
                                     int xmax = rect.width + rect.x, ymax = rect.height + rect.y;
-                                    int x = getX() + jScrollPane1.getWidth() + 22, y = getY() + btnLoad.getY() + mb.getHeight() + btnLoad.getHeight() + 35;
+                                    int x = getX() + jScrollPane1.getWidth() + 22;
+                                    int y = getY() + btnLearn.getY() + mb.getHeight() + btnLearn.getHeight() + 35;
                                     // If dlgEdit would overlap the screen edge in X or Y direction, adjust proposed position to prevent:
                                     if (x + de.getWidth() > xmax) x = xmax - de.getWidth();
                                     if (y + de.getHeight() > ymax) y = ymax - de.getHeight();
@@ -752,7 +692,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
                                 blnCancel = blnCancelModalDialog;
                                 if (!blnCancel) {
                                     rows++;
-                                    aryQIF[e][L] = tableModelInProgress.getValueAt(rows - 1, 3).toString();
+                                    aryQIF[e][L] = tableModelInProgress.getValueAt(rows - 1, colAccount).toString();
                                 }
                             }
                         }
@@ -787,15 +727,29 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         } catch (IOException exTransWrite2) {
             handleException(this, "Error while writing " + ctlOutputFile.getText() + ": " + exTransWrite2.toString(), "btnExecuteActionPerformed subroutine part 2");
         }
+        if (lastPE != null) {
+            JOptionPane.showMessageDialog(this, "The last Pattern Syntax error encountered was '"
+                    + lastPE.getDescription() + "',\nfor the pattern '" + lastPE.getPattern()
+                    + "'\n in the field '" + strMatchErrorStr + "' (pattern list line " + intMatchErrorLine + ").\n\nDetails follow:\n\n"
+                    + lastPE.getMessage(), "Pattern Error(s) Detected", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
      * Load the working grid from the specified data file
      */
     public void loadGrid() {
-        int r, rows;
+        int r, i;
+        int intFileColumns = 1;
         String strLine;
-        String[] ary;
+        String[] ary, ary0;
+        String strTabs = "";
+
+        // Build a list of tab characters to append to input lines to ensure split() works as desired.
+        intGridColumns = stringTable.getColumnCount();
+        for (i=1; i<intGridColumns; i++) {
+            strTabs += '\t';
+        }
 
         // First see if the .CustomQIF directory exists and create it if not
         File myProgramDir = new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".CustomQIF");
@@ -805,17 +759,30 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
                 // Get a copy of the table structure
                 DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
                 // Clear table first
-                rows = tableModel.getRowCount();
-                for (r = (rows - 1); r >= 0; r--) {
-                    tableModel.removeRow(r);
-                    rows--;
-                }
+                tableModel.setRowCount(0);
                 try {
                     BufferedReader in = new BufferedReader(new FileReader(myStartupFile));
                     r = 1;
                     while ((strLine = in.readLine()) != null) {
-                        ary = strLine.concat("\t\t\t\t\t\t").split("\t", 5);    // Making sure we at least get 4 tab-delimited elements
-                        tableModel.addRow(new Object[]{r, ary[0], ary[1], ary[2], ary[3]});
+                        if (r == 1) {
+                            // Assuming that sampling row 1 is sufficient to determine if this is an old file structure,
+                            // Count the number of columns (= number of tabs + 1)
+                            for (i=0; i<strLine.length(); i++) {
+                                if (strLine.charAt(i) == '\t') intFileColumns++;
+                            }
+                        }
+                        ary = strLine.concat(strTabs).split("\t", intGridColumns);    // Making sure we at least get intGridColumns tab-delimited elements
+                        if ((intFileColumns == 4) && (intGridColumns == 8)) {
+                            // Migrate from pre-0.91 file (4 tab-separated columns) to 0.91 file (7 tab-separated columns)
+                            // (The 8 above includes the row number column which is not saved in the file)
+                            // First, shift column data 3 columns to the right; the new columns are inserted after ary[0].
+                            for (i=6; i>=4; i--) ary[i]=ary[i-3];
+                            // First column used to contain up to 3 optional match fields, separated by a pipe ('|').
+                            // We hereby move them to the new 2nd through 4th columns so that all match strings are able to contain pipe characters as part of regular expressions.
+                            ary0 = ary[0].concat("|||").split("\\|",50);
+                            for (i=0; i<=3; i++) ary[i]=ary0[i];
+                        }
+                        tableModel.addRow(new Object[]{r, ary[0], ary[1], ary[2], ary[3], ary[4], ary[5], ary[6]});
                         r++;
                     }
                     in.close();
@@ -872,7 +839,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         int r, rows;
         rows = stringTable.getRowCount();
         for (r = 0; r < rows; r++) {
-            stringTable.setValueAt(r, r, 0);
+            stringTable.setValueAt(r, r, colRow);
         }
     }
 
@@ -943,8 +910,6 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
     }
 
     private void loadState() {
-        String strLine;
-        int intEqOffset;
         String strKey;
         String strValue;
         String aryGeom[];
@@ -968,7 +933,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
                     // No problem
                 }
                 strKey = "InputFile_" + System.getProperty("os.name").replace(' ', '_');
-                strValue = prop.getProperty("InputFile_" + System.getProperty("os.name").replace(' ', '_'));
+                strValue = prop.getProperty(strKey);
                 if (strValue != null) {
                     ctlInputFile.setText(strValue);
                 }
@@ -976,7 +941,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
                 if (strValue != null) {
                     ctlOutputFile.setText(strValue);
                 }
-                strPatternFile = prop.getProperty("PatternFile");
+                strPatternFile = prop.getProperty("PatternFile", "Untitled");
                 strValue = prop.getProperty("Geometry");
                 aryGeom = strValue.concat(",,,").split(",");
                 int intX = Integer.valueOf(aryGeom[0]);
@@ -1104,7 +1069,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
             return null;
         }
 
-        aryQIF = new String[intElements][5];
+        aryQIF = new String[intElements][strTypes.length()];
         aryKeep = new Boolean[intElements];
 
         try {
@@ -1113,7 +1078,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
             strHeader = strLine;
             while ((strLine = in2.readLine()) != null) {
                 // Handle ^ transaction delimiter either on separate line or at end of a line
-                if (!strLine.equals("^") && strLine.length() > 0) {
+                if (!strLine.equals("^") && !strLine.isEmpty()) {
                     if (strLine.endsWith("^")) {
                         blnDelimiterFound = true;
                         strLine = strLine.substring(0, strLine.length() - 1);
@@ -1144,33 +1109,33 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
                 }
                 if (strLine.equals("^")) {
                     aryKeep[intElement] = true;
-                    // Fix missing L tags
+                    // Fix missing L tags; TODO: Make this list dynamic so user can configure.  Save it in State file.
                     if (aryQIF[intElement][L] == null) {
                         StrMElement = aryQIF[intElement][M].toUpperCase();
                         if (aryQIF[intElement][N] != null
-                                || StrMElement.indexOf("PERSONAL CHEQUE") >= 0) {
+                                || StrMElement.contains("PERSONAL CHEQUE")) {
                             aryQIF[intElement][L] = "CHECK";
                         } else if ((StrMElement.indexOf("CREDIT ") == 0 &&
                                    !StrMElement.startsWith("JOURNAL")) ||
-                                (  StrMElement.indexOf("DEPOSIT") >= 0
+                                (  StrMElement.contains("DEPOSIT")
                                 && aryQIF[intElement][T].charAt(0) != '-')) {
                             aryQIF[intElement][L] = "DEP";
-                        } else if (StrMElement.indexOf("PERIODIC PAY") >= 0
+                        } else if (StrMElement.contains("PERIODIC PAY")
                                 && aryQIF[intElement][T].charAt(0) == '-') {
                             aryQIF[intElement][L] = "REPEATPMT";
-                        } else if (StrMElement.indexOf("T'FER") >= 0
-                                || StrMElement.indexOf("TFR") >= 0
-                                || StrMElement.indexOf("DEBIT TRANSFER") >= 0) {
+                        } else if (StrMElement.contains("T'FER")
+                                || StrMElement.contains("TFR")
+                                || StrMElement.contains("DEBIT TRANSFER")) {
                             aryQIF[intElement][L] = "XFER";
-                        } else if (StrMElement.indexOf("WITHDRAWAL") >= 0) {
+                        } else if (StrMElement.contains("WITHDRAWAL")) {
                             aryQIF[intElement][L] = "DEBIT";
                         } else if (aryQIF[intElement][T].charAt(0) == '-'
-                                || StrMElement.indexOf("RETAIL PURCHASE") >= 0
-                                || StrMElement.indexOf("BPAY") >= 0
-                                || StrMElement.indexOf("DIRECT DEBIT") >= 0
-                                || StrMElement.indexOf("TRANSACTION FEE") >= 0
-                                || StrMElement.indexOf("LOAN INTEREST") >= 0
-                                || StrMElement.indexOf("BILL PAYMENT") >= 0) {
+                                || StrMElement.contains("RETAIL PURCHASE")
+                                || StrMElement.contains("BPAY")
+                                || StrMElement.contains("DIRECT DEBIT")
+                                || StrMElement.contains("TRANSACTION FEE")
+                                || StrMElement.contains("LOAN INTEREST")
+                                || StrMElement.contains("BILL PAYMENT")) {
                             aryQIF[intElement][L] = "PAYMENT";
                         } else if (!aryQIF[intElement][T].equals("0")) {
                             aryQIF[intElement][L] = "DEP";
@@ -1261,19 +1226,22 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         rows = tableModel.getRowCount();
         
         for (r = 0; r < rows; r++) {
-            if (itemList.getIndexOf(tableModel.getValueAt(r, 3)) < 0) {
-                itemList.addElement(tableModel.getValueAt(r, 3));
+            if (itemList.getIndexOf(tableModel.getValueAt(r, colAccount)) < 0) {
+                itemList.addElement(tableModel.getValueAt(r, colAccount));
             }
         }
         return itemList;
     }
 
-    public void replaceRow(int row, String narration, String xtype, String account, String annotation) {
-        stringTable.setValueAt(row, row, 0);    // Row number column
-        stringTable.setValueAt(narration, row, 1);
-        stringTable.setValueAt(xtype, row, 2);
-        stringTable.setValueAt(account, row, 3);
-        stringTable.setValueAt(annotation, row, 4);
+    public void replaceRow(int row, String xNarration, String xDate, String xAmount, String xCheque, String xtype, String account, String annotation) {
+        stringTable.setValueAt(row, row, colRow);    // Row number column; does not appear in data file
+        stringTable.setValueAt(xNarration, row, colNarration);
+        stringTable.setValueAt(xDate, row, colXDate);
+        stringTable.setValueAt(xAmount, row, colXAmount);
+        stringTable.setValueAt(xCheque, row, colCheque);
+        stringTable.setValueAt(xtype, row, colXType);
+        stringTable.setValueAt(account, row, colAccount);
+        stringTable.setValueAt(annotation, row, colAnnotation);
     }
     
     public void reverseItems() {
@@ -1281,7 +1249,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         boolean blnTemp;
         int i = 0, j = aryQIF.length - 1, k;
         while (i < j) {
-            for (k = 0; k < 5; k++) {
+            for (k = 0; k < strTypes.length(); k++) {
                 strTemp = aryQIF[i][k];
                 aryQIF[i][k] = aryQIF[j][k];
                 aryQIF[j][k] = strTemp;
@@ -1314,33 +1282,30 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAdd;
-    private javax.swing.JButton btnDown;
-    private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnExecute;
-    private javax.swing.JButton btnFind;
     private javax.swing.JButton btnInputFile;
     private javax.swing.JButton btnLearn;
-    private javax.swing.JButton btnLoad;
     private javax.swing.JButton btnOutputFile;
-    private javax.swing.JButton btnRemove;
-    private javax.swing.JButton btnSave;
-    private javax.swing.JButton btnUp;
     private javax.swing.JTextField ctlInputFile;
     private javax.swing.JTextField ctlOutputFile;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JMenuItem jmiEdit;
     private javax.swing.JPopupMenu jpmTableContext;
+    private javax.swing.JMenu mEdit;
     private javax.swing.JMenu mFile;
     private javax.swing.JMenu mOptions;
     private javax.swing.JMenuBar mb;
+    private javax.swing.JMenuItem miAdd;
+    private javax.swing.JMenuItem miDown;
+    private javax.swing.JMenuItem miEdit;
     private javax.swing.JMenuItem miNarrationOnly;
     private javax.swing.JMenuItem miOpen;
     private javax.swing.JMenuItem miQuit;
+    private javax.swing.JMenuItem miRemove;
     private javax.swing.JCheckBoxMenuItem miReversedTransactions;
     private javax.swing.JMenuItem miSave;
     private javax.swing.JMenuItem miSaveAs;
+    private javax.swing.JMenuItem miUp;
     private org.netbeans.swing.etable.ETable stringTable;
-    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }
