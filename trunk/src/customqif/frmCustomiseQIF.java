@@ -1,8 +1,5 @@
 /*
- * $Id: frmCustomiseQIF.java 44 2014-11-17 09:47:09Z eldon_r $
- *
  * Created on 20 March 2007, 01:09
- *
  */
 package customqif;
 

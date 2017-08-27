@@ -1,6 +1,4 @@
 /*
- * $Id: dlgEdit.java 45 2014-11-17 09:53:47Z eldon_r $
- *
  * dlgEdit.java
  *
  * Created on 13/11/2011, 4:49:40 PM
