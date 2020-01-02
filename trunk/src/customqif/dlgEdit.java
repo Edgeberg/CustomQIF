@@ -12,8 +12,7 @@
 
 package customqif;
 
-import java.awt.Color;
-import java.awt.event.ActionEvent;
+import static java.awt.Color.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.JComponent;
@@ -32,13 +31,8 @@ public class dlgEdit extends javax.swing.JDialog {
     // (URLs valid as at 26/10/2014)
     @Override
     protected JRootPane createRootPane() {
-        ActionListener actionListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                // setVisible(false);
-                btnCancelActionPerformed(actionEvent);
-            }
-        };
+        ActionListener actionListener = this::btnCancelActionPerformed // setVisible(false);
+        ;
         JRootPane rootPane = new JRootPane();
         KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
         rootPane.registerKeyboardAction(actionListener, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -84,16 +78,16 @@ public class dlgEdit extends javax.swing.JDialog {
                 , -1
                 , false)) {
             lblMatchIndicator.setText("Pattern currently matches this transaction");
-            lblMatchIndicator.setBackground(Color.green);
+            lblMatchIndicator.setBackground(green);
             blnMatches = true;
         } else {
             lblMatchIndicator.setText("Pattern does not currently match this transaction");
-            lblMatchIndicator.setBackground(Color.orange);
+            lblMatchIndicator.setBackground(orange);
             blnMatches = false;
         }
         if (parent.lastPE != null) {
             lblMatchIndicator.setText("Pattern has a syntax error");
-            lblMatchIndicator.setBackground(Color.red);
+            lblMatchIndicator.setBackground(red);
             lblMatchIndicator.setToolTipText("Error text: '" + parent.lastPE.getDescription() + "'");
         } else {
             lblMatchIndicator.setToolTipText("Click here to re-check");
@@ -127,6 +121,7 @@ public class dlgEdit extends javax.swing.JDialog {
      * @param editingRow
      * If editing existing row data, specify row, otherwise -1
      **/
+    @SuppressWarnings("unchecked")
     public dlgEdit(frmCustomiseQIF parentForm, boolean modal,
             String strTransactionLines,
             String strNarration,

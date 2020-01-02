@@ -67,6 +67,7 @@ public class SortedComboBoxModel extends DefaultComboBoxModel
 	/*
 	 *	Create a model with data and use the nature sort order of the items
 	 */
+	@SuppressWarnings("unchecked")
 	public SortedComboBoxModel(Object[] items)
 	{
 		super( sortArray(items, null) );
@@ -75,6 +76,7 @@ public class SortedComboBoxModel extends DefaultComboBoxModel
 	/*
 	 *  Create a model with data and use the specified Comparator
 	 */
+	@SuppressWarnings("unchecked")
 	public SortedComboBoxModel(Object[] items, Comparator comparator)
 	{
 		super( sortArray(items, comparator) );
@@ -93,6 +95,7 @@ public class SortedComboBoxModel extends DefaultComboBoxModel
 	 *  Create a model with data and use the specified Comparator
 	 */
 
+	@SuppressWarnings("unchecked")
 	public SortedComboBoxModel(ArrayList items, Comparator comparator)
 	{
 		super( sortArray((Object[]) (Object) items, comparator) );
@@ -109,7 +112,7 @@ public class SortedComboBoxModel extends DefaultComboBoxModel
 	@Override
 	public void insertElementAt(Object element, int index)
 	{
-		int size = getSize();
+		int size = this.getSize();
 
 		//  Determine where to insert element to keep model in sorted order
 

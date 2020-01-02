@@ -141,6 +141,7 @@ public class frmLoadSave extends javax.swing.JFrame {
     private javax.swing.JTextField txtNewName;
     // End of variables declaration//GEN-END:variables
 
+    @SuppressWarnings("unchecked")
     private void loadList(String strDir) {
         File myFile = new File(strDir);
         File[] myFileArr = { new File(strDir) };
