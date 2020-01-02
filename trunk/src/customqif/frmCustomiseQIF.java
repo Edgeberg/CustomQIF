@@ -293,7 +293,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         });
         mEdit.add(miEdit);
 
-        miUp.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        miUp.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, java.awt.event.InputEvent.ALT_MASK));
         miUp.setMnemonic('U');
         miUp.setText("Move Up");
         miUp.addActionListener(new java.awt.event.ActionListener() {
@@ -303,7 +303,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         });
         mEdit.add(miUp);
 
-        miDown.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DOWN, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        miDown.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DOWN, java.awt.event.InputEvent.ALT_MASK));
         miDown.setMnemonic('D');
         miDown.setText("Move Down");
         miDown.addActionListener(new java.awt.event.ActionListener() {
@@ -439,6 +439,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
 
     private void miUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miUpActionPerformed
         if (stringTable.getSelectedRowCount() > 0 && ! stringTable.isRowSelected(0)) {
+            int iRow = stringTable.getSelectedRow();
             DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
             for (int i=1 ; i<stringTable.getRowCount() ; i++) {
                 if (stringTable.isRowSelected(i)) {
@@ -446,13 +447,14 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
                 }
             }
             stringTable.setModel(tableModel);
-            stringTable.changeSelection(stringTable.getSelectedRow() - 1, stringTable.getSelectedColumn(), false, false);
+            stringTable.changeSelection(iRow - 1, stringTable.getSelectedColumn(), false, false);
             numberGrid();
         }
     }//GEN-LAST:event_miUpActionPerformed
 
     private void miDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDownActionPerformed
         if (stringTable.getSelectedRowCount() > 0 && ! stringTable.isRowSelected(stringTable.getRowCount() - 1)) {
+            int iRow = stringTable.getSelectedRow();
             DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
             for (int i=stringTable.getRowCount() - 2 ; i>0 ; i--) {
                 if (stringTable.isRowSelected(i)) {
@@ -460,7 +462,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
                 }
             }
             stringTable.setModel(tableModel);
-            stringTable.changeSelection(stringTable.getSelectedRow() + 1, stringTable.getSelectedColumn(), false, false);
+            stringTable.changeSelection(iRow + 1, stringTable.getSelectedColumn(), false, false);
             numberGrid();
         }
     }//GEN-LAST:event_miDownActionPerformed
@@ -496,12 +498,15 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
 
     private void miAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddActionPerformed
         DefaultTableModel tableModel = (DefaultTableModel) stringTable.getModel();
-        if (stringTable.getSelectedRowCount() > 0) {
-            tableModel.insertRow(stringTable.getSelectedRow(), (Object[]) null);
-        } else {
+        int r = stringTable.getRowCount() - 1;
+        if (stringTable.getSelectedRowCount() == 0 || stringTable.getSelectedRow() == stringTable.getRowCount() - 1) {
             tableModel.addRow((Object[]) null);
+        } else {
+            tableModel.insertRow(stringTable.getSelectedRow() + 1, (Object[]) null);
+            r = stringTable.getSelectedRow();
         }
         stringTable.setModel(tableModel);
+        stringTable.changeSelection(r + 1, 0, false, false);
         numberGrid();
     }//GEN-LAST:event_miAddActionPerformed
 
@@ -814,7 +819,9 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
                 BufferedWriter out = new BufferedWriter(new FileWriter(myStartupFile));
                 for (r = 0; r < rows; r++) {
                     for (c = 1; c < columns; c++) {
-                        out.write(tableModel.getValueAt(r, c).toString());
+                        if (tableModel.getValueAt(r, c) != null) {
+                            out.write(tableModel.getValueAt(r, c).toString());
+                        }
                         if (c < (columns - 1)) {
                             out.write("\t");
                         }
@@ -836,7 +843,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         int r, rows;
         rows = stringTable.getRowCount();
         for (r = 0; r < rows; r++) {
-            stringTable.setValueAt(r, r, colRow);
+            stringTable.setValueAt(r+1, r, colRow);
         }
     }
 

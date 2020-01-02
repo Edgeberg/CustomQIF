@@ -1,6 +1,6 @@
 CustomQIF is a GUI helper application designed to help with the intelligent
 import of overly simple bank account transaction exports.  It is written in Java
-using the Netbeans IDE, and is aims to be as cross-platform as possible by
+using the Netbeans IDE, and it aims to be as cross-platform as possible by
 utilising the in-built Java functions that return the file system directory
 separator, the user home directory, etc.  It currently takes one input .QIF file
 and produces one output .QIF file (which can be the same file).
@@ -11,7 +11,7 @@ My former banking institution offered downloadable transaction histories in QIF
 and CSV formats, and more recently in other formats such as OFX.  That's nice,
 but to really make use of these in a personal finance package was taking a lot
 of manual work because the transaction categories comprised of a handful of
-keywords that basically just meant what basic kind of transaction it was; e.g.
+keywords that basically just indicated the basic kind of transaction it was; e.g.
 XFER, CHECK, DEPOSIT, PAYMENT, REPTPMT.
 
 My current bank, a home loan specialist offering line-of-credit style accounts
