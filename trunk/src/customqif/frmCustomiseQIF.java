@@ -62,6 +62,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
     DefaultTableModel tableModelInProgress;
     boolean blnCancelModalDialog = false;
     Boolean blnReversedTransactions = false;
+    Boolean blnCaseSensitive = false;
     Boolean blnReformatDate = false;    // If we have sensed that we've got MM/DD/YYYY dates; we want YYYYMMDD.
     Boolean blnDDMM = false;            // If the above is true AND we've found an obvious DD/MM/YYYY formatted date in the file.
                                         // FIXME: This is a limited, inflexible check, and we currently only handle these 3 options.
@@ -124,6 +125,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         mOptions = new javax.swing.JMenu();
         miNarrationOnly = new javax.swing.JMenuItem();
         miReversedTransactions = new javax.swing.JCheckBoxMenuItem();
+        miCaseSensitive = new javax.swing.JCheckBoxMenuItem();
 
         jpmTableContext.setInvoker(stringTable);
 
@@ -262,6 +264,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
 
         mEdit.setMnemonic('E');
         mEdit.setText("Edit");
+        mEdit.setToolTipText("");
 
         miAdd.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_INSERT, 0));
         miAdd.setMnemonic('A');
@@ -286,7 +289,6 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         miEdit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
         miEdit.setMnemonic('E');
         miEdit.setText("Edit");
-        miEdit.setToolTipText("");
         miEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miEditActionPerformed(evt);
@@ -330,6 +332,10 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
 
         miReversedTransactions.setText("Transactions in Reversed Date Order");
         mOptions.add(miReversedTransactions);
+
+        miCaseSensitive.setText("Case-Sensitive Comparisons");
+        miCaseSensitive.setToolTipText("With this unchecked you don't have to cover both upper and lower case variations tor a pattern");
+        mOptions.add(miCaseSensitive);
 
         mb.add(mOptions);
 
@@ -576,7 +582,11 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
     public boolean safeMatchString(String strString, String strPattern, String strStringName, int intPatternListLine, boolean blnCanErrorDlg) {
         boolean res = false;
         try {
-            res = nvl(strString).matches(strPattern);
+            if (blnCaseSensitive) {
+                res = nvl(strString).matches(strPattern);
+            } else {
+                res = nvl(strString).toUpperCase().matches(strPattern.toUpperCase());
+            }
         } catch (java.util.regex.PatternSyntaxException pe) {
             if (blnCanErrorDlg) {
                 // We're allowed to tell the user immediately
@@ -633,6 +643,8 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         lastPE = null;
         intMatchErrorLine = -1;
 
+        blnCaseSensitive = miCaseSensitive.getState();
+        
         //status1.setText("Processing...");
         BufferedWriter out = null;
         try {
@@ -893,6 +905,8 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
                 prop.setProperty("PatternFile", strPatternFile);
                 blnReversedTransactions = miReversedTransactions.getState();
                 prop.setProperty("ReversedTransactions", blnReversedTransactions.toString());
+                blnCaseSensitive = miCaseSensitive.getState();
+                prop.setProperty("CaseSensitive", blnCaseSensitive.toString());
                 prop.setProperty("Geometry",
                         String.valueOf(this.getLocation().x) + "," +
                         String.valueOf(this.getLocation().y) + "," +
@@ -923,6 +937,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
 
         // Set defaults for when values are not set in State file, or there is not yet a State file
         blnReversedTransactions = false;
+        blnCaseSensitive = false;
         ctlInputFile.setText(System.getProperty("user.home") + System.getProperty("file.separator") + "inputfile.qif");
         ctlOutputFile.setText(System.getProperty("user.home") + System.getProperty("file.separator") + "outputfile.qif");
 
@@ -969,10 +984,12 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
                 }
                 this.setLocation(intX, intY);
                 this.setSize(intWidth, intHeight);
-                strNarrationPatterns = prop.getProperty("NarrationOnlyPatterns");
+                strNarrationPatterns = nvl(prop.getProperty("NarrationOnlyPatterns"));
                 tabStrToArray();
-                blnReversedTransactions = prop.getProperty("ReversedTransactions").equals("true");
+                blnReversedTransactions = nvl(prop.getProperty("ReversedTransactions")).equals("true");
                 miReversedTransactions.setSelected(blnReversedTransactions);
+                blnCaseSensitive = nvl(prop.getProperty("CaseSensitive")).equals("true");
+                miCaseSensitive.setSelected(blnCaseSensitive);
                 if (input != null) {
                     try {
                         input.close();
@@ -1305,6 +1322,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
     private javax.swing.JMenu mOptions;
     private javax.swing.JMenuBar mb;
     private javax.swing.JMenuItem miAdd;
+    private javax.swing.JCheckBoxMenuItem miCaseSensitive;
     private javax.swing.JMenuItem miDown;
     private javax.swing.JMenuItem miEdit;
     private javax.swing.JMenuItem miNarrationOnly;
