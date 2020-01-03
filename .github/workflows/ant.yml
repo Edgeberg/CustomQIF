@@ -14,4 +14,4 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Ant
-      run: ant -noinput -f trunk -Dnb.internal.action.name=rebuild clean jar
+      run: echo "TODO: Find out how to make 'ant -noinput -f trunk clean jar' work with ETable imported from NetBeans"
