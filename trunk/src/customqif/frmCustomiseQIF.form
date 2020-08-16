@@ -177,7 +177,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="miCaseSensitive">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Case-Sensitive Comparisons"/>
-                <Property name="toolTipText" type="java.lang.String" value="With this unchecked you don&apos;t have to cover both upper and lower case variations tor a pattern"/>
+                <Property name="toolTipText" type="java.lang.String" value="With this unchecked you don&apos;t have to cover both upper and lower case variations for a pattern"/>
               </Properties>
             </MenuItem>
           </SubComponents>
@@ -216,23 +216,28 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" max="32767" attributes="0"/>
-                  <Group type="102" alignment="1" attributes="0">
+                  <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
                           <Component id="btnOutputFile" alignment="1" max="32767" attributes="1"/>
                           <Component id="btnInputFile" alignment="1" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="ctlInputFile" pref="498" max="32767" attributes="0"/>
-                          <Component id="ctlOutputFile" max="32767" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="btnExecute" alignment="1" min="-2" pref="110" max="-2" attributes="3"/>
-                          <Component id="btnLearn" alignment="1" min="-2" pref="110" max="-2" attributes="1"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="ctlInputFile" pref="498" max="32767" attributes="0"/>
+                                  <Component id="ctlOutputFile" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="btnLearn" min="-2" pref="110" max="-2" attributes="1"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              <Component id="btnExecute" min="-2" pref="110" max="-2" attributes="3"/>
+                          </Group>
                       </Group>
                   </Group>
+                  <Component id="jScrollPane1" alignment="0" pref="733" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -241,8 +246,7 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="228" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="240" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="btnInputFile" alignment="3" min="-2" max="-2" attributes="0"/>

@@ -1,6 +1,5 @@
 /*
- * $Id: Main.java 17 2010-03-24 14:06:24Z eldon_r $
- * 
+ * Main.java
  * Created on 19 March 2007, 23:10
  *
  * This program was created to store and use regular expression strings for
