@@ -95,12 +95,12 @@
         <entry key="Application.url" value="${git.url}" operation="="/>
     </propertyfile>
     <target name="-post-jar">
-        <property file="${basedir}/src/customqif/resources/CustomQIF.properties"/>
+        <property file="src/customqif/resources/CustomQIF.properties"/>
         <echo>Building self-contained jar for version ${Application.revision}</echo>
         <jar jarfile="dist/CustomQIF-${git.version}.jar">
             <zipfileset src="${dist.jar}" excludes="META-INF/*" />
-            <zipfileset src="dist/lib/org-netbeans-swing-outline.jar" excludes="META-INF/*" />
-            <zipfileset src="dist/lib/swing-layout-1.0.4.jar" excludes="META-INF/*" />
+            <zipfileset src="libs/swing-outline/org-netbeans-swing-outline.jar" excludes="META-INF/*" />
+            <zipfileset src="libs/swing-layout/swing-layout-1.0.4.jar" excludes="META-INF/*" />
                     
             <manifest>
                 <attribute name="Main-Class" value="customqif.Main"/>
