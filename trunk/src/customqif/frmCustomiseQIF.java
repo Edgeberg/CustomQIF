@@ -22,6 +22,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
+import javax.swing.Box;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.netbeans.swing.etable.ETableColumnModel;
@@ -76,6 +77,9 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         this.appVersion = 0.91;
         this.intGridColumns = 6;        // Just a default; we'll get it from the grid later
         initComponents();
+
+        // Put Help menu on the RHS by inserting a HorizontalGlue component just before it
+        mb.add(Box.createHorizontalGlue(), mb.getComponentIndex(mHelp));
         
         // Make the WindowListener our only way out of this app.:
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -103,6 +107,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
 
         jpmTableContext = new javax.swing.JPopupMenu();
         jmiEdit = new javax.swing.JMenuItem();
+        jMenu1 = new javax.swing.JMenu();
         jScrollPane1 = new javax.swing.JScrollPane();
         stringTable = new org.netbeans.swing.etable.ETable();
         btnExecute = new javax.swing.JButton();
@@ -127,10 +132,12 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         miNarrationOnly = new javax.swing.JMenuItem();
         miReversedTransactions = new javax.swing.JCheckBoxMenuItem();
         miCaseSensitive = new javax.swing.JCheckBoxMenuItem();
+        mHelp = new javax.swing.JMenu();
+        miAbout = new javax.swing.JMenuItem();
 
         jpmTableContext.setInvoker(stringTable);
 
-        jmiEdit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        jmiEdit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jmiEdit.setMnemonic('E');
         jmiEdit.setText("Edit");
         jmiEdit.addActionListener(new java.awt.event.ActionListener() {
@@ -139,6 +146,8 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
             }
         });
         jpmTableContext.add(jmiEdit);
+
+        jMenu1.setText("jMenu1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Customise QIF files downloaded from the bank");
@@ -221,7 +230,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         mFile.setMnemonic('F');
         mFile.setText("File");
 
-        miOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        miOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         miOpen.setMnemonic('O');
         miOpen.setText("Open");
         miOpen.addActionListener(new java.awt.event.ActionListener() {
@@ -231,7 +240,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         });
         mFile.add(miOpen);
 
-        miSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        miSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         miSave.setMnemonic('S');
         miSave.setText("Save");
         miSave.addActionListener(new java.awt.event.ActionListener() {
@@ -241,7 +250,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         });
         mFile.add(miSave);
 
-        miSaveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        miSaveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
         miSaveAs.setMnemonic('A');
         miSaveAs.setText("Save As...");
         miSaveAs.addActionListener(new java.awt.event.ActionListener() {
@@ -251,7 +260,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         });
         mFile.add(miSaveAs);
 
-        miQuit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+        miQuit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         miQuit.setMnemonic('Q');
         miQuit.setText("Quit");
         miQuit.addActionListener(new java.awt.event.ActionListener() {
@@ -287,7 +296,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         });
         mEdit.add(miRemove);
 
-        miEdit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        miEdit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         miEdit.setMnemonic('E');
         miEdit.setText("Edit");
         miEdit.addActionListener(new java.awt.event.ActionListener() {
@@ -297,7 +306,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         });
         mEdit.add(miEdit);
 
-        miUp.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, java.awt.event.InputEvent.ALT_MASK));
+        miUp.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, java.awt.event.InputEvent.ALT_DOWN_MASK));
         miUp.setMnemonic('U');
         miUp.setText("Move Up");
         miUp.addActionListener(new java.awt.event.ActionListener() {
@@ -307,7 +316,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         });
         mEdit.add(miUp);
 
-        miDown.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DOWN, java.awt.event.InputEvent.ALT_MASK));
+        miDown.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DOWN, java.awt.event.InputEvent.ALT_DOWN_MASK));
         miDown.setMnemonic('D');
         miDown.setText("Move Down");
         miDown.addActionListener(new java.awt.event.ActionListener() {
@@ -339,6 +348,21 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         mOptions.add(miCaseSensitive);
 
         mb.add(mOptions);
+
+        mHelp.setMnemonic('H');
+        mHelp.setText("Help");
+        mHelp.setInheritsPopupMenu(true);
+
+        miAbout.setMnemonic('A');
+        miAbout.setText("About");
+        miAbout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miAboutActionPerformed(evt);
+            }
+        });
+        mHelp.add(miAbout);
+
+        mb.add(mHelp);
 
         setJMenuBar(mb);
 
@@ -519,6 +543,10 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
         stringTable.changeSelection(r + 1, 0, false, false);
         numberGrid();
     }//GEN-LAST:event_miAddActionPerformed
+
+    private void miAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAboutActionPerformed
+        JOptionPane.showMessageDialog(this, Main.AppName.concat(" version ").concat(Main.AppVersion).concat("\n\n").concat(Main.AppURL), "About", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_miAboutActionPerformed
 
     /**
      * The main member, which receives initial program control
@@ -805,7 +833,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
                     }
                     in.close();
                     stringTable.setModel(tableModel);
-                    this.setTitle("CustomiseQIF: " + strPatternFile);
+                    this.setTitle(Main.AppName + ": " + strPatternFile);
                 } catch (IOException ex) {
                     handleException(this, "Error while reading '" + myStartupFile.getAbsolutePath() + "': " + ex.toString(), "miOpenActionPerformed subroutine");
                 }
@@ -845,7 +873,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
                     out.write("\n");
                 }
                 out.close();
-                this.setTitle("CustomiseQIF: " + strPatternFile);
+                this.setTitle(Main.AppName + ": " + strPatternFile);
             } catch (IOException ex) {
                 handleException(this, "Error while writing '" + myStartupFile.getAbsolutePath() + "': " + ex.toString(), "miSaveActionPerformed subroutine");
             }
@@ -866,7 +894,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
     private void doTheCloseThing() {
         int selection = JOptionPane.showConfirmDialog(
                 null,
-                "Are you sure you want to quit without saving the patterns?", "CustomiseQIF",
+                "Are you sure you want to quit without saving the patterns?", Main.AppName,
                 JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.WARNING_MESSAGE);
         if (selection == JOptionPane.YES_OPTION) {
@@ -1311,32 +1339,35 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnExecute;
-    private javax.swing.JButton btnInputFile;
-    private javax.swing.JButton btnLearn;
-    private javax.swing.JButton btnOutputFile;
-    private javax.swing.JTextField ctlInputFile;
-    private javax.swing.JTextField ctlOutputFile;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JMenuItem jmiEdit;
-    private javax.swing.JPopupMenu jpmTableContext;
-    private javax.swing.JMenu mEdit;
-    private javax.swing.JMenu mFile;
-    private javax.swing.JMenu mOptions;
-    private javax.swing.JMenuBar mb;
-    private javax.swing.JMenuItem miAdd;
-    private javax.swing.JCheckBoxMenuItem miCaseSensitive;
-    private javax.swing.JMenuItem miDown;
-    private javax.swing.JMenuItem miEdit;
-    private javax.swing.JMenuItem miNarrationOnly;
-    private javax.swing.JMenuItem miOpen;
-    private javax.swing.JMenuItem miQuit;
-    private javax.swing.JMenuItem miRemove;
-    private javax.swing.JCheckBoxMenuItem miReversedTransactions;
-    private javax.swing.JMenuItem miSave;
-    private javax.swing.JMenuItem miSaveAs;
-    private javax.swing.JMenuItem miUp;
-    private org.netbeans.swing.etable.ETable stringTable;
+    javax.swing.JButton btnExecute;
+    javax.swing.JButton btnInputFile;
+    javax.swing.JButton btnLearn;
+    javax.swing.JButton btnOutputFile;
+    javax.swing.JTextField ctlInputFile;
+    javax.swing.JTextField ctlOutputFile;
+    javax.swing.JMenu jMenu1;
+    javax.swing.JScrollPane jScrollPane1;
+    javax.swing.JMenuItem jmiEdit;
+    javax.swing.JPopupMenu jpmTableContext;
+    javax.swing.JMenu mEdit;
+    javax.swing.JMenu mFile;
+    javax.swing.JMenu mHelp;
+    javax.swing.JMenu mOptions;
+    javax.swing.JMenuBar mb;
+    javax.swing.JMenuItem miAbout;
+    javax.swing.JMenuItem miAdd;
+    javax.swing.JCheckBoxMenuItem miCaseSensitive;
+    javax.swing.JMenuItem miDown;
+    javax.swing.JMenuItem miEdit;
+    javax.swing.JMenuItem miNarrationOnly;
+    javax.swing.JMenuItem miOpen;
+    javax.swing.JMenuItem miQuit;
+    javax.swing.JMenuItem miRemove;
+    javax.swing.JCheckBoxMenuItem miReversedTransactions;
+    javax.swing.JMenuItem miSave;
+    javax.swing.JMenuItem miSaveAs;
+    javax.swing.JMenuItem miUp;
+    org.netbeans.swing.etable.ETable stringTable;
     // End of variables declaration//GEN-END:variables
 }
 

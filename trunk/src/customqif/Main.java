@@ -28,6 +28,11 @@
 
 package customqif;
 
+import java.io.IOException;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Edgeberg <eldon_r@users.sf.net>
@@ -38,10 +43,24 @@ public class Main {
     public Main() {
     }
     
+    public static String AppVersion = "(Unknown version)";
+    public static String AppURL = "http://github.com/Edgeberg/CustomQIF.git";
+    public static String AppName = "QIF Customiser Application";
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        Properties prop = new Properties();
+        try {
+            prop.load(Main.class.getResourceAsStream("/customqif/resources/CustomQIF.properties"));
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Error while retrieving application properties from the jar file!", ex);
+        }
+        AppVersion = prop.getProperty("Application.revision", AppVersion);
+        AppName = prop.getProperty("Application.name", AppName);
+        AppURL = prop.getProperty("Application.url", AppURL);
+        System.out.print("Version " + AppVersion + "\n");
         new frmCustomiseQIF().setVisible(true);
     }
     

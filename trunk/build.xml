@@ -70,4 +70,41 @@
     nbproject/build-impl.xml file. 
 
     -->
+    <target name="-post-init" description="Set build version from source control command">
+        <exec outputproperty="git.version" executable="git">
+            <arg value="describe"/>
+            <arg value="--tags"/>
+        </exec>
+        <exec outputproperty="git.url" executable="git">
+            <arg value="remote"/>
+            <arg value="get-url"/>
+            <arg value="origin"/>
+            <redirector>
+                <outputfilterchain>
+                    <tokenfilter>
+                        <replaceregex pattern="/[-A-Za-z0-9_]*@:?" replace="/" flags="g"/>
+                    </tokenfilter>
+                </outputfilterchain>
+            </redirector>
+        </exec>
+        <echo>Revision found from Git: ${git.version}</echo>
+        <echo>Origin URL found from Git: ${git.url}</echo>
+    </target>
+    <propertyfile file="src/customqif/resources/CustomQIF.properties">
+        <entry key="Application.revision" value="${git.version}" operation="="/>
+        <entry key="Application.url" value="${git.url}" operation="="/>
+    </propertyfile>
+    <target name="-post-jar">
+        <property file="${basedir}/src/customqif/resources/CustomQIF.properties"/>
+        <echo>Building self-contained jar for version ${Application.revision}</echo>
+        <jar jarfile="dist/CustomQIF-${git.version}.jar">
+            <zipfileset src="${dist.jar}" excludes="META-INF/*" />
+            <zipfileset src="dist/lib/org-netbeans-swing-outline.jar" excludes="META-INF/*" />
+            <zipfileset src="dist/lib/swing-layout-1.0.4.jar" excludes="META-INF/*" />
+                    
+            <manifest>
+                <attribute name="Main-Class" value="customqif.Main"/>
+            </manifest>
+        </jar>
+    </target>
 </project>
