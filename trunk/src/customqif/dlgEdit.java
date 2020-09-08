@@ -146,6 +146,7 @@ public class dlgEdit extends javax.swing.JDialog {
             jpTransaction.setVisible(false);
             cbMatchOther.setVisible(false);
             setSize(getWidth(), getHeight() - jpTransaction.getHeight());
+            btnSkip.setVisible(false);
             blnNewTransaction = false;
             if (strDate.isEmpty() && strAmount.isEmpty() && strCheque.isEmpty()) {
                 cbMatchOther.setSelected(false);
@@ -226,6 +227,7 @@ public class dlgEdit extends javax.swing.JDialog {
         lblAnnotation = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         btnOK = new javax.swing.JButton();
+        btnSkip = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
         jpType = new javax.swing.JPanel();
         jtfTransactionType = new javax.swing.JTextField();
@@ -244,7 +246,6 @@ public class dlgEdit extends javax.swing.JDialog {
         jspTransaction.setViewportView(jtaTransaction);
 
         lblMatchIndicator.setBackground(java.awt.SystemColor.info);
-        lblMatchIndicator.setForeground(java.awt.SystemColor.infoText);
         lblMatchIndicator.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblMatchIndicator.setText("Current pattern does not match");
         lblMatchIndicator.setOpaque(true);
@@ -276,7 +277,8 @@ public class dlgEdit extends javax.swing.JDialog {
                     .addComponent(lblTransaction)
                     .addComponent(lblMatchIndicator))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jspTransaction, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE))
+                .addComponent(jspTransaction, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         lblPattern.setLabelFor(jtfNarration);
@@ -286,11 +288,6 @@ public class dlgEdit extends javax.swing.JDialog {
         jtfNarration.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 jtfNarrationFocusLost(evt);
-            }
-        });
-        jtfNarration.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                jtfNarrationPropertyChange(evt);
             }
         });
 
@@ -328,8 +325,8 @@ public class dlgEdit extends javax.swing.JDialog {
                     .addComponent(lblPattern)
                     .addComponent(cbMatchOther))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jtfNarration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jtfNarration, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         lblDate.setText("Date");
@@ -406,6 +403,14 @@ public class dlgEdit extends javax.swing.JDialog {
             }
         });
 
+        btnSkip.setMnemonic('S');
+        btnSkip.setText("Skip");
+        btnSkip.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSkipActionPerformed(evt);
+            }
+        });
+
         btnCancel.setMnemonic('C');
         btnCancel.setText("Cancel");
         btnCancel.addActionListener(new java.awt.event.ActionListener() {
@@ -421,7 +426,9 @@ public class dlgEdit extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnOK, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnSkip)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -429,7 +436,8 @@ public class dlgEdit extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(btnOK)
-                .addComponent(btnCancel))
+                .addComponent(btnCancel)
+                .addComponent(btnSkip))
         );
 
         javax.swing.GroupLayout jpReplacementAccountLayout = new javax.swing.GroupLayout(jpReplacementAccount);
@@ -462,7 +470,7 @@ public class dlgEdit extends javax.swing.JDialog {
                 .addComponent(lblAnnotation)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jtfAnnotation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -489,10 +497,11 @@ public class dlgEdit extends javax.swing.JDialog {
         jpTypeLayout.setVerticalGroup(
             jpTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpTypeLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addGap(0, 6, Short.MAX_VALUE)
                 .addComponent(lblTransactionType)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jtfTransactionType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jtfTransactionType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jpEditLayout = new javax.swing.GroupLayout(jpEdit);
@@ -510,13 +519,13 @@ public class dlgEdit extends javax.swing.JDialog {
             .addGroup(jpEditLayout.createSequentialGroup()
                 .addComponent(jpTransaction, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jpNarration, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jpNarration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jpOtherFields, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jpOtherFields, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jpType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jpType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jpReplacementAccount, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jpReplacementAccount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -589,10 +598,6 @@ public class dlgEdit extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_jtfNarrationKeyTyped
 
-    private void jtfNarrationPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jtfNarrationPropertyChange
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jtfNarrationPropertyChange
-
     private void lblMatchIndicatorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblMatchIndicatorMouseClicked
         if (checkMatch(jtfNarration.getText(), jtfDate.getText(), jtfAmount.getText(), jtfCheque.getText(), jtfTransactionType.getText(), strTransactionNarrationToMatch, strTransactionTypeToMatch, jtaTransaction.getText())) {
             btnOK.setEnabled(true);
@@ -626,9 +631,16 @@ public class dlgEdit extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_cbMatchOtherActionPerformed
 
+    private void btnSkipActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSkipActionPerformed
+        parent.blnSkipModalDialog = true;
+        parent.blnCancelModalDialog = false;
+        this.dispose();
+    }//GEN-LAST:event_btnSkipActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnOK;
+    private javax.swing.JButton btnSkip;
     private javax.swing.JCheckBox cbMatchOther;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JComboBox jcbAccount;

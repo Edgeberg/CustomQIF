@@ -62,7 +62,8 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
     String aryNarrationPatterns[];
     String strPatternFile = "";
     DefaultTableModel tableModelInProgress;
-    boolean blnCancelModalDialog = false;
+    Boolean blnCancelModalDialog = false;
+    Boolean blnSkipModalDialog = false;
     Boolean blnReversedTransactions = false;
     Boolean blnCaseSensitive = false;
     Boolean blnReformatDate = false;    // If we have sensed that we've got MM/DD/YYYY dates; we want YYYYMMDD.
@@ -708,6 +709,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
                         }
                         if (!blnMatch) {
                             if (learn) {
+                                blnSkipModalDialog = false;
                                 dlgEdit de = new dlgEdit(this, true,
                                           nvl(aryQIF[e][M]) + nnvl(aryQIF[e][M], "\n")
                                         + nvl(aryQIF[e][L]) + nnvl(aryQIF[e][L], "\n")
@@ -736,7 +738,7 @@ public final class frmCustomiseQIF extends javax.swing.JFrame {
                                 }
                                 de.setVisible(true);
                                 blnCancel = blnCancelModalDialog;
-                                if (!blnCancel) {
+                                if (!blnCancel && !blnSkipModalDialog) {
                                     rows++;
                                     aryQIF[e][L] = tableModelInProgress.getValueAt(rows - 1, colAccount).toString();
                                 }
