@@ -148,13 +148,11 @@ public class dlgEdit extends javax.swing.JDialog {
             setSize(getWidth(), getHeight() - jpTransaction.getHeight());
             btnSkip.setVisible(false);
             blnNewTransaction = false;
-            if (strDate.isEmpty() && strAmount.isEmpty() && strCheque.isEmpty()) {
-                cbMatchOther.setSelected(false);
-                jpOtherFields.setVisible(false);
-            } else {
-                cbMatchOther.setSelected(true);
-                jpOtherFields.setVisible(true);
-            }
+            cbMatchOther.setSelected(true);
+            jpOtherFields.setVisible(true);
+            strDt = strDate;
+            strAmt = strAmount;
+            strChq = strCheque;
         } else {
             jtaTransaction.setText(strTransactionLines);
             blnNewTransaction = true;
@@ -170,6 +168,9 @@ public class dlgEdit extends javax.swing.JDialog {
         jtfNarration.setText(strNarrPattern);
         strTransactionNarrationToMatch=strNarration;
         strTransactionTypeToMatch=strTransactionType;
+        jtfDate.setText(strDt);
+        jtfAmount.setText(strAmt);
+        jtfCheque.setText(strChq);
         jtfTransactionType.setText(strTransactionType);
         jtfAccount.setText(strReplacement);
         jcbAccount.setModel(scbModel);
@@ -617,7 +618,7 @@ public class dlgEdit extends javax.swing.JDialog {
     }//GEN-LAST:event_jtfNarrationFocusLost
 
     private void cbMatchOtherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbMatchOtherActionPerformed
-        // Note that this event fires before the state changes, so we reverse te logic:
+        // Note that this event fires before the state changes, so we reverse the logic:
         if (!cbMatchOther.isSelected()) {
             jtfDate.setText("");
             jtfAmount.setText("");
